@@ -1,0 +1,1482 @@
+{
+  "info": {
+    "_postman_id": "bf976456-ac8a-47bd-9c28-a40f12e62871",
+    "name": "VarietyStore",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12987956",
+    "_collection_link": "https://go.postman.co/collection/31681697-bf976456-ac8a-47bd-9c28-a40f12e62871?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{var-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{var-ip}}/login?mobile=9920030583&password=12345678",
+          "host": [
+            "{{var-ip}}"
+          ],
+          "path": [
+            "login"
+          ],
+          "query": [
+            {
+              "key": "mobile",
+              "value": "9920030583"
+            },
+            {
+              "key": "password",
+              "value": "12345678"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{var-l}}/register?name=Avinash Kumar&email=ak279642@gmail.com&mobile=7079322204&password=12345&otp=4929",
+          "host": [
+            "{{var-l}}"
+          ],
+          "path": [
+            "register"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "Avinash Kumar"
+            },
+            {
+              "key": "email",
+              "value": "ak279642@gmail.com"
+            },
+            {
+              "key": "mobile",
+              "value": "7079322204"
+            },
+            {
+              "key": "password",
+              "value": "12345"
+            },
+            {
+              "key": "otp",
+              "value": "4929"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send OTP",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/sendOTP?mobile=7079322204",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "sendOTP"
+          ],
+          "query": [
+            {
+              "key": "mobile",
+              "value": "7079322204"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send Forget OTP",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/sendForgetOTP?mobile=7079322204",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "sendForgetOTP"
+          ],
+          "query": [
+            {
+              "key": "mobile",
+              "value": "7079322204"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Change Password",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/changePassword?mobile=7079322204&password=12345&otp=4745",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "changePassword"
+          ],
+          "query": [
+            {
+              "key": "mobile",
+              "value": "7079322204",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "12345",
+              "type": "text"
+            },
+            {
+              "key": "otp",
+              "value": "4745",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Home Data",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{var-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{var-ip}}/getHomeData?longitude=85.1375645&latitude=25.6940948&limit=2",
+          "host": [
+            "{{var-ip}}"
+          ],
+          "path": [
+            "getHomeData"
+          ],
+          "query": [
+            {
+              "key": "longitude",
+              "value": "85.1375645"
+            },
+            {
+              "key": "latitude",
+              "value": "25.6940948"
+            },
+            {
+              "key": "limit",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Product",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/getProduct?categoryId=1",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "getProduct"
+          ],
+          "query": [
+            {
+              "key": "categoryId",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Cart",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/auth/getCart",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "auth",
+            "getCart"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Wishlist",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/auth/getWishlist",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "auth",
+            "getWishlist"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add To Cart",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{acw-l}}/auth/addToCart?product_id=1&quantity=1&variation_id=2",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "auth",
+            "addToCart"
+          ],
+          "query": [
+            {
+              "key": "product_id",
+              "value": "1"
+            },
+            {
+              "key": "quantity",
+              "value": "1"
+            },
+            {
+              "key": "variation_id",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add To Wishlist",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/auth/addToWishlist?product_id=1",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "auth",
+            "addToWishlist"
+          ],
+          "query": [
+            {
+              "key": "product_id",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete From Cart",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/auth/deleteFromCart?product_id=1",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "auth",
+            "deleteFromCart"
+          ],
+          "query": [
+            {
+              "key": "product_id",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete From Wishlist",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/auth/deleteFromWishlist?product_id=1",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "auth",
+            "deleteFromWishlist"
+          ],
+          "query": [
+            {
+              "key": "product_id",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET SUB CATEGORY",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/getSubCategory?categoryId=1&limit=10&order=asc",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "getSubCategory"
+          ],
+          "query": [
+            {
+              "key": "categoryId",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10",
+              "description": "limit default 10"
+            },
+            {
+              "key": "order",
+              "value": "asc",
+              "description": "asc , dsc . new , old"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PARTNER REGISTER",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/registerPartner?otp=1968&mobile=7079322203&name=Avinash Kumar&email=partner@gmail.com&city_id=2097&password=12345&confirm_password=12345&business_name=Test Shop&business_type=Proprietor Single Outlet&contact_person_mobile=7079322204&service_model[0]=1&contact_person_name=Avinash Kumar&longitude=85.3375645&latitude=25.6940948&business_address=Ara Bhojpur",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "registerPartner"
+          ],
+          "query": [
+            {
+              "key": "otp",
+              "value": "1968",
+              "description": "USE SEND OTP API TO SEND OTP"
+            },
+            {
+              "key": "mobile",
+              "value": "7079322203"
+            },
+            {
+              "key": "name",
+              "value": "Avinash Kumar"
+            },
+            {
+              "key": "email",
+              "value": "partner@gmail.com"
+            },
+            {
+              "key": "city_id",
+              "value": "2097",
+              "description": "ID OF CITY"
+            },
+            {
+              "key": "password",
+              "value": "12345"
+            },
+            {
+              "key": "confirm_password",
+              "value": "12345"
+            },
+            {
+              "key": "business_name",
+              "value": "Test Shop"
+            },
+            {
+              "key": "business_type",
+              "value": "Proprietor Single Outlet"
+            },
+            {
+              "key": "contact_person_mobile",
+              "value": "7079322204"
+            },
+            {
+              "key": "service_model[0]",
+              "value": "1",
+              "description": "Service ID Array"
+            },
+            {
+              "key": "contact_person_name",
+              "value": "Avinash Kumar"
+            },
+            {
+              "key": "longitude",
+              "value": "85.3375645"
+            },
+            {
+              "key": "latitude",
+              "value": "25.6940948"
+            },
+            {
+              "key": "business_address",
+              "value": "Ara Bhojpur"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET STATES",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/getState",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "getState"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET STATE WISE DISTRICT",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/getDistrict?state_id=5",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "getDistrict"
+          ],
+          "query": [
+            {
+              "key": "state_id",
+              "value": "5",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET DISTRICT WISE CITY",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/getCity?district_id=244",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "getCity"
+          ],
+          "query": [
+            {
+              "key": "district_id",
+              "value": "244"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET SERVICE",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/getServices",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "getServices"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PARTNER LOGIN",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/loginPartner?mobile=6079322204&password=12345",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "loginPartner"
+          ],
+          "query": [
+            {
+              "key": "mobile",
+              "value": "6079322204"
+            },
+            {
+              "key": "password",
+              "value": "12345"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CHANGE PARTNER PASSWORD",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/changePartnerPassword?mobile=7079322203&password=12345&otp=5158",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "changePartnerPassword"
+          ],
+          "query": [
+            {
+              "key": "mobile",
+              "value": "7079322203"
+            },
+            {
+              "key": "password",
+              "value": "12345"
+            },
+            {
+              "key": "otp",
+              "value": "5158",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SEND PARTNER FORGET OTP",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/sendForgetOtpPartner?mobile=7079322203",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "sendForgetOtpPartner"
+          ],
+          "query": [
+            {
+              "key": "mobile",
+              "value": "7079322203"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "LOGIN USER PROFILE",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-partner-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/auth/profile",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "auth",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UPDATE PARTNER KYC",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-partner-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "aadhaar_front_image",
+              "type": "file",
+              "fileNotInWorkingDirectoryWarning": "This file isn't in your working directory. Teammates you share this request with won't be able to use this file. To make collaboration easier you can setup your working directory in Settings.",
+              "filesNotInWorkingDirectory": [
+                "/C:/Users/Avinash kumar/Downloads/aadhar.jpg"
+              ],
+              "src": "/C:/Users/Avinash kumar/Downloads/aadhar.jpg"
+            },
+            {
+              "key": "aadhaar_back_image",
+              "type": "file",
+              "fileNotInWorkingDirectoryWarning": "This file isn't in your working directory. Teammates you share this request with won't be able to use this file. To make collaboration easier you can setup your working directory in Settings.",
+              "filesNotInWorkingDirectory": [
+                "/C:/Users/Avinash kumar/Downloads/aadhar.jpg"
+              ],
+              "src": "/C:/Users/Avinash kumar/Downloads/aadhar.jpg"
+            },
+            {
+              "key": "pan_image",
+              "type": "file",
+              "fileNotInWorkingDirectoryWarning": "This file isn't in your working directory. Teammates you share this request with won't be able to use this file. To make collaboration easier you can setup your working directory in Settings.",
+              "filesNotInWorkingDirectory": [
+                "/C:/Users/Avinash kumar/Downloads/download.jpg"
+              ],
+              "src": "/C:/Users/Avinash kumar/Downloads/download.jpg"
+            },
+            {
+              "key": "shop_front_image",
+              "type": "file",
+              "fileNotInWorkingDirectoryWarning": "This file isn't in your working directory. Teammates you share this request with won't be able to use this file. To make collaboration easier you can setup your working directory in Settings.",
+              "filesNotInWorkingDirectory": [
+                "/C:/Users/Avinash kumar/Downloads/download (1).jpg"
+              ],
+              "src": "/C:/Users/Avinash kumar/Downloads/download (1).jpg"
+            },
+            {
+              "key": "shop_back_image",
+              "type": "file",
+              "src": "/C:/Users/Avinash kumar/Downloads/download (1).jpg"
+            },
+            {
+              "key": "service_id[0]",
+              "value": "1",
+              "type": "text"
+            },
+            {
+              "key": "bargaining[0]",
+              "value": "8",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{acw-l}}/auth/updatePartnerKyc",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "auth",
+            "updatePartnerKyc"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET ATTRIBUTE LIST",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/getAttributeList",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "getAttributeList"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SEARCH PARTNER PRODUCT",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwbmFjaGFzbWF3YWxhLmNvbS9wcm9qZWN0L2FwaS9sb2dpblBhcnRuZXIiLCJpYXQiOjE3MTA1MDM0NTQsImV4cCI6MTc0NjUwMzQ1NCwibmJmIjoxNzEwNTAzNDU0LCJqdGkiOiJJSmdwU29sdWZIc2NvYnFxIiwic3ViIjoiMiIsInBydiI6ImRmODgzZGI5N2JkMDVlZjhmZjg1MDgyZDY4NmM0NWU4MzJlNTkzYTkifQ.hFLqxE2E73Cfsdzpsi_-IR2yghsF7FjlMHbg3hwBAKU",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/auth/searchProduct?material=Poloride&coating=SCRATCH RESISTANCE COATING&index=1.498\n",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "searchProduct"
+          ],
+          "query": [
+            {
+              "key": "material",
+              "value": "Poloride"
+            },
+            {
+              "key": "coating",
+              "value": "SCRATCH RESISTANCE COATING"
+            },
+            {
+              "key": "index",
+              "value": "1.498\n"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "FILTER PARTNER PRODUCT",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwbmFjaGFzbWF3YWxhLmNvbS9wcm9qZWN0L2FwaS9sb2dpblBhcnRuZXIiLCJpYXQiOjE3MTA1MDM0NTQsImV4cCI6MTc0NjUwMzQ1NCwibmJmIjoxNzEwNTAzNDU0LCJqdGkiOiJJSmdwU29sdWZIc2NvYnFxIiwic3ViIjoiMiIsInBydiI6ImRmODgzZGI5N2JkMDVlZjhmZjg1MDgyZDY4NmM0NWU4MzJlNTkzYTkifQ.hFLqxE2E73Cfsdzpsi_-IR2yghsF7FjlMHbg3hwBAKU",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/auth/filterProduct?material=CR-39(PLASTIC)&coating=SCRATCH RESISTANCE COATING&index=1.498,1.56",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "filterProduct"
+          ],
+          "query": [
+            {
+              "key": "material",
+              "value": "CR-39(PLASTIC)"
+            },
+            {
+              "key": "coating",
+              "value": "SCRATCH RESISTANCE COATING"
+            },
+            {
+              "key": "index",
+              "value": "1.498,1.56"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET VARIATION DETIAL",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwbmFjaGFzbWF3YWxhLmNvbS9wcm9qZWN0L2FwaS9sb2dpblBhcnRuZXIiLCJpYXQiOjE3MTA1MDM0NTQsImV4cCI6MTc0NjUwMzQ1NCwibmJmIjoxNzEwNTAzNDU0LCJqdGkiOiJJSmdwU29sdWZIc2NvYnFxIiwic3ViIjoiMiIsInBydiI6ImRmODgzZGI5N2JkMDVlZjhmZjg1MDgyZDY4NmM0NWU4MzJlNTkzYTkifQ.hFLqxE2E73Cfsdzpsi_-IR2yghsF7FjlMHbg3hwBAKU",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/auth/getVariationDetail/18",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "getVariationDetail",
+            "18"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PLACE PARTNER ORDER",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwbmFjaGFzbWF3YWxhLmNvbS9wcm9qZWN0L2FwaS9sb2dpblBhcnRuZXIiLCJpYXQiOjE3MTExNzI4MzMsImV4cCI6MTc0NzE3MjgzMywibmJmIjoxNzExMTcyODMzLCJqdGkiOiJpc1JTWFZNblFyQTYybm1RIiwic3ViIjoiMiIsInBydiI6ImRmODgzZGI5N2JkMDVlZjhmZjg1MDgyZDY4NmM0NWU4MzJlNTkzYTkifQ.EyEIKbFJkADXywiTzUX5GLrF-77HOVRk3twzz7BCjYs",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"variation_id\":[\"2\"],\"prescription_image\":null,\"lense_type\":\"Single Vision\",\"frame_option\":\"\",\"advance_frame\":\"Both\",\"a_size\":\"\",\"b_size\":\"\",\"dbl\":\"\",\"ed\":\"\",\"frame_selection\":\"1\",\"remark\":\"\",\"sph[0]\":\"\",\"cyl[0]\":\"\",\"axis[0]\":\"\",\"sph[1]\":\"\",\"cyl[1]\":\"\",\"axis[1]\":\"\",\"sph[2]\":\"\",\"cyl[2]\":\"\",\"axis[2]\":\"\",\"sph[3]\":\"\",\"cyl[3]\":\"\",\"axis[3]\":\"\",\"sph[4]\":\"\",\"cyl[4]\":\"\",\"axis[4]\":\"\",\"sph[5]\":\"\",\"cyl[5]\":\"\",\"axis[5]\":\"\",\"l_pd\":\"\",\"l_fh\":\"\",\"r_pd\":\"\",\"r_fh\":\"\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{acw-ip}}/auth/placePartnerOrder?variation_id=1&lense_type=Single Vision&frame_option=Rimless&advance_frame=Both&a_size=15&b_size=12&dbl=10&ed=5&frame_selection=1&remark=Test Order&sph[0]=-6.00&cyl[0]=-2.25&axis[0]=5&sph[1]=-5.75&cyl[1]=-2.25&axis[1]=5&l_pd=1&l_fh=2&r_pd=3&r_fh=2",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "placePartnerOrder"
+          ],
+          "query": [
+            {
+              "key": "variation_id",
+              "value": "1",
+              "description": "Required"
+            },
+            {
+              "key": "lense_type",
+              "value": "Single Vision",
+              "description": "Required.(Single Vision / Bifocal / Progressive) "
+            },
+            {
+              "key": "frame_option",
+              "value": "Rimless",
+              "description": "Optional"
+            },
+            {
+              "key": "advance_frame",
+              "value": "Both",
+              "description": "Optional  - Both / Left / Right"
+            },
+            {
+              "key": "a_size",
+              "value": "15",
+              "description": "Optional "
+            },
+            {
+              "key": "b_size",
+              "value": "12",
+              "description": "Optional"
+            },
+            {
+              "key": "dbl",
+              "value": "10",
+              "description": "Optional"
+            },
+            {
+              "key": "ed",
+              "value": "5",
+              "description": "Optional"
+            },
+            {
+              "key": "frame_selection",
+              "value": "1",
+              "description": "Optional"
+            },
+            {
+              "key": "remark",
+              "value": "Test Order",
+              "description": "Optional"
+            },
+            {
+              "key": "sph[0]",
+              "value": "-6.00",
+              "description": "Index 1 For Single Vision Right Eye\nIndex 2 for Bifocal/Progressive Left Eye Distance\nIndex 3 for Bifocal/Progressive Left Eye Near\nIndex 4 for Bifocal/Progressive Right Eye Distance\nIndex 5 for Bifocal/Progressive Right Eye Near"
+            },
+            {
+              "key": "cyl[0]",
+              "value": "-2.25"
+            },
+            {
+              "key": "axis[0]",
+              "value": "5"
+            },
+            {
+              "key": "sph[1]",
+              "value": "-5.75",
+              "description": "Index 1 For Single Vision Right Eye\nIndex 2 for Bifocal/Progressive Left Eye Distance\nIndex 3 for Bifocal/Progressive Left Eye Near\nIndex 4 for Bifocal/Progressive Right Eye Distance\nIndex 5 for Bifocal/Progressive Right Eye Near"
+            },
+            {
+              "key": "cyl[1]",
+              "value": "-2.25"
+            },
+            {
+              "key": "axis[1]",
+              "value": "5"
+            },
+            {
+              "key": "l_pd",
+              "value": "1",
+              "description": "Required if Advance Frame Both or Left"
+            },
+            {
+              "key": "l_fh",
+              "value": "2",
+              "description": "Required if Advance Frame Both or Left"
+            },
+            {
+              "key": "r_pd",
+              "value": "3",
+              "description": "Required if Advance Frame Both or Right"
+            },
+            {
+              "key": "r_fh",
+              "value": "2",
+              "description": "Required if Advance Frame Both or Right"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET PARTNER ORDER",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwbmFjaGFzbWF3YWxhLmNvbS9wcm9qZWN0L2FwaS9sb2dpblBhcnRuZXIiLCJpYXQiOjE3MTA1MDM0NTQsImV4cCI6MTc0NjUwMzQ1NCwibmJmIjoxNzEwNTAzNDU0LCJqdGkiOiJJSmdwU29sdWZIc2NvYnFxIiwic3ViIjoiMiIsInBydiI6ImRmODgzZGI5N2JkMDVlZjhmZjg1MDgyZDY4NmM0NWU4MzJlNTkzYTkifQ.hFLqxE2E73Cfsdzpsi_-IR2yghsF7FjlMHbg3hwBAKU",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/auth/getPartnerOrder?offset=1&limit=20",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "getPartnerOrder"
+          ],
+          "query": [
+            {
+              "key": "offset",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "20"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PARTNER ORDER RECIEPT",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwbmFjaGFzbWF3YWxhLmNvbS9wcm9qZWN0L2FwaS9sb2dpblBhcnRuZXIiLCJpYXQiOjE3MTA1MDM0NTQsImV4cCI6MTc0NjUwMzQ1NCwibmJmIjoxNzEwNTAzNDU0LCJqdGkiOiJJSmdwU29sdWZIc2NvYnFxIiwic3ViIjoiMiIsInBydiI6ImRmODgzZGI5N2JkMDVlZjhmZjg1MDgyZDY4NmM0NWU4MzJlNTkzYTkifQ.hFLqxE2E73Cfsdzpsi_-IR2yghsF7FjlMHbg3hwBAKU",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/auth/orderReciept/4/pass-product-title-here(Optional)",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "orderReciept",
+            "4",
+            "pass-product-title-here(Optional)"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UPDATE PARTNER PAYMENT",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwbmFjaGFzbWF3YWxhLmNvbS9wcm9qZWN0L2FwaS9sb2dpblBhcnRuZXIiLCJpYXQiOjE3MTExNzI4MzMsImV4cCI6MTc0NzE3MjgzMywibmJmIjoxNzExMTcyODMzLCJqdGkiOiJpc1JTWFZNblFyQTYybm1RIiwic3ViIjoiMiIsInBydiI6ImRmODgzZGI5N2JkMDVlZjhmZjg1MDgyZDY4NmM0NWU4MzJlNTkzYTkifQ.EyEIKbFJkADXywiTzUX5GLrF-77HOVRk3twzz7BCjYs",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{acw-ip}}/auth/partnerPaymentResponse?pay_id=pay_NrLH9C9fvMiKRH",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "partnerPaymentResponse"
+          ],
+          "query": [
+            {
+              "key": "pay_id",
+              "value": "pay_NrLH9C9fvMiKRH",
+              "description": "required"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET ALL PRODUCT",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/getAllProduct?offset=4&limit=2",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "getAllProduct"
+          ],
+          "query": [
+            {
+              "key": "offset",
+              "value": "4"
+            },
+            {
+              "key": "limit",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET ALL PRODUCT ATTRIBUTE",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/getAllProductAttribute",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "getAllProductAttribute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "FILTER ALL PRODUCT",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/filterAllProduct?offset=1&limit=2",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "filterAllProduct"
+          ],
+          "query": [
+            {
+              "key": "offset",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ADD PRODUCT TO PARTNER CART",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-partner-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/auth/addToPartnerCart?variation_id=2",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "auth",
+            "addToPartnerCart"
+          ],
+          "query": [
+            {
+              "key": "variation_id",
+              "value": "2",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE FROM PARTNER CART",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{acw-partner-token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{acw-l}}/auth/deleteFromPartnerCart?variation_id=2",
+          "host": [
+            "{{acw-l}}"
+          ],
+          "path": [
+            "auth",
+            "deleteFromPartnerCart"
+          ],
+          "query": [
+            {
+              "key": "variation_id",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET PARTNER CAR PRDUCT",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwbmFjaGFzbWF3YWxhLmNvbS9wcm9qZWN0L2FwaS9sb2dpblBhcnRuZXIiLCJpYXQiOjE3MTExNzI4MzMsImV4cCI6MTc0NzE3MjgzMywibmJmIjoxNzExMTcyODMzLCJqdGkiOiJpc1JTWFZNblFyQTYybm1RIiwic3ViIjoiMiIsInBydiI6ImRmODgzZGI5N2JkMDVlZjhmZjg1MDgyZDY4NmM0NWU4MzJlNTkzYTkifQ.EyEIKbFJkADXywiTzUX5GLrF-77HOVRk3twzz7BCjYs",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/auth/getPartnerCartProduct",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "getPartnerCartProduct"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PARTNER CART ORDER",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwbmFjaGFzbWF3YWxhLmNvbS9wcm9qZWN0L2FwaS9sb2dpblBhcnRuZXIiLCJpYXQiOjE3MTExNzI4MzMsImV4cCI6MTc0NzE3MjgzMywibmJmIjoxNzExMTcyODMzLCJqdGkiOiJpc1JTWFZNblFyQTYybm1RIiwic3ViIjoiMiIsInBydiI6ImRmODgzZGI5N2JkMDVlZjhmZjg1MDgyZDY4NmM0NWU4MzJlNTkzYTkifQ.EyEIKbFJkADXywiTzUX5GLrF-77HOVRk3twzz7BCjYs",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n// {\r\n//     \"variation_id[0]\":19,\r\n//     \"variation_id[1]\":19\r\n// }\r\n\r\n\r\n{\"variation_id\": [ 2,4]}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{acw-ip}}/auth/orderCartProduct",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "orderCartProduct"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getReviews",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3Byb2plY3QuYXBuYWNoYXNtYXdhbGEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTcxMzg1NTkyNywiZXhwIjoxNzQ5ODU1OTI3LCJuYmYiOjE3MTM4NTU5MjcsImp0aSI6IldEZ2gxWUNyRHFHSHY4MFIiLCJzdWIiOiI3IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.hc-HR-7j8H6LNAbCv89ZtOiEK3o71jz0vf-lgJV2ocA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{acw-ip}}/auth/getUserOrder",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "getUserOrder"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AddReview",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3Byb2plY3QuYXBuYWNoYXNtYXdhbGEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTcxMzg1NTkyNywiZXhwIjoxNzQ5ODU1OTI3LCJuYmYiOjE3MTM4NTU5MjcsImp0aSI6IldEZ2gxWUNyRHFHSHY4MFIiLCJzdWIiOiI3IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.hc-HR-7j8H6LNAbCv89ZtOiEK3o71jz0vf-lgJV2ocA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"product_id\":\"1\",\n    \"variation_id\":\"3\",\n    \"review\":\"Test Review Test ReviewTest ReviewTest dawdaw ReviewTest ReviewTest ReviewTest Review\",\n    \"title\":\"Test Title two\",\n    \"rating\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{acw-ip}}/auth/review",
+          "host": [
+            "{{acw-ip}}"
+          ],
+          "path": [
+            "auth",
+            "review"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

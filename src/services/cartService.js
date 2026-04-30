@@ -1,9 +1,10 @@
 import API from "./api";
 
 // ➕ ADD TO CART
-export const addToCartAPI = (product_id, quantity = 1) => {
+export const addToCartAPI = (product_id, variation_id, quantity = 1) => {
   return API.post("/auth/addToCart", {
     product_id,
+    variation_id,
     quantity,
   });
 };
@@ -14,8 +15,10 @@ export const getCartAPI = () => {
 };
 
 // ❌ REMOVE ITEM FROM CART
-export const deleteCartAPI = (product_id) => {
+export const deleteCartAPI = (data) => {
+  // Trying both data (body) and params (query string) to ensure compatibility
   return API.delete("/auth/deleteFromCart", {
-    data: { product_id },
+    data: typeof data === 'object' ? data : { variation_id: data },
+    params: typeof data === 'object' ? data : { variation_id: data },
   });
 };
