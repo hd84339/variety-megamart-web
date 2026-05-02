@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingBag, Trash2, Plus, Minus, ArrowLeft, ShoppingCart, CreditCard, ShieldCheck } from "lucide-react";
-import { getCartAPI, deleteCartAPI } from "../services/cartService";
+import { getCartAPI, deleteCartAPI, addToCartAPI } from "../services/cartService";
 import { createOrderAPI } from "../services/orderService";
 
 const IMAGE_BASE_URL = "https://project.varietymegastore.com/uploads/variations/";
@@ -64,7 +64,7 @@ const Cart = () => {
       try {
         console.log("Trying removal with combined payload:", payload);
         await deleteCartAPI(payload);
-        loadCart();
+        await loadCart();
         window.dispatchEvent(new Event("cartUpdated"));
         return;
       } catch (err) {
@@ -75,23 +75,27 @@ const Cart = () => {
     alert("Failed to remove item. Please try refreshing the page.");
   };
 
-  const updateQuantity = async (item, delta) => {
-    const variationId = item.variation_id || item.product_variation_id || item.id;
-    const productId = item.product_id || item.product?.id || item.product_id;
+const updateQuantity = async (item, delta) => {
+  const variationId = item.variation_id || item.product_variation_id;
+  const productId = item.product_id || item.product?.id;
 
-    if (delta === -1 && item.quantity <= 1) {
-      removeItem(item);
-      return;
-    }
+  const newQuantity = item.quantity + delta;
 
-    try {
-      await addToCartAPI(productId, variationId, delta);
-      loadCart();
-      window.dispatchEvent(new Event("cartUpdated"));
-    } catch (err) {
-      console.log("UPDATE QTY ERROR:", err);
-    }
-  };
+  if (newQuantity <= 0) {
+    await removeItem(item);
+    return;
+  }
+
+  try {
+    // 🔥 SEND DELTA (+1 or -1) AS API IS ADDITIVE
+    await addToCartAPI(productId, variationId, delta);
+
+    await loadCart();
+    window.dispatchEvent(new Event("cartUpdated"));
+  } catch (err) {
+    console.log("UPDATE QTY ERROR:", err.response?.data || err.message);
+  }
+};
 
   const calculateSubtotal = () => {
     return cart.reduce((total, item) => {
