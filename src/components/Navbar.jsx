@@ -7,6 +7,7 @@ import logo from "../assets/logo.png";
 const Navbar = () => {
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
   useEffect(() => {
     const fetchCartCount = async () => {
@@ -19,9 +20,20 @@ const Navbar = () => {
       }
     };
 
+    const checkAuth = () => {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    };
+
     fetchCartCount();
+    checkAuth();
     window.addEventListener("cartUpdated", fetchCartCount);
-    return () => window.removeEventListener("cartUpdated", fetchCartCount);
+    window.addEventListener("cartUpdated", checkAuth);
+    window.addEventListener("storage", checkAuth);
+    return () => {
+      window.removeEventListener("cartUpdated", fetchCartCount);
+      window.removeEventListener("cartUpdated", checkAuth);
+      window.removeEventListener("storage", checkAuth);
+    };
   }, []);
 
   return (
@@ -47,11 +59,16 @@ const Navbar = () => {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-5 md:gap-8">
-          <button className="flex flex-col items-center text-white cursor-pointer transition-all hover:opacity-100 hover:-translate-y-0.5 bg-transparent border-none p-0 opacity-90 group" onClick={() => navigate("/login")}>
+          <button 
+            className="flex flex-col items-center text-white cursor-pointer transition-all hover:opacity-100 hover:-translate-y-0.5 bg-transparent border-none p-0 opacity-90 group" 
+            onClick={() => navigate(isLoggedIn ? "/profile" : "/login")}
+          >
             <div className="relative p-1 rounded-lg group-hover:bg-white/10 transition-colors">
               <User size={26} />
             </div>
-            <span className="text-[0.75rem] font-bold mt-0.5 uppercase tracking-widest hidden sm:block">Login</span>
+            <span className="text-[0.75rem] font-bold mt-0.5 uppercase tracking-widest hidden sm:block">
+              {isLoggedIn ? "Profile" : "Login"}
+            </span>
           </button>
 
           <button className="flex flex-col items-center text-white cursor-pointer transition-all hover:opacity-100 hover:-translate-y-0.5 bg-transparent border-none p-0 opacity-90 group" onClick={() => navigate("/cart")}>

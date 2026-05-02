@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { 
-  ShoppingBag, 
-  ArrowLeft, 
-  Star, 
-  Truck, 
-  ShieldCheck, 
-  RotateCcw, 
-  Plus, 
+import {
+  ShoppingBag,
+  ArrowLeft,
+  Star,
+  Truck,
+  ShieldCheck,
+  RotateCcw,
+  Plus,
   Minus,
   ShoppingCart,
   Share2,
@@ -50,6 +50,7 @@ const ProductDetail = () => {
       console.log("AddToCart response:", res.data);
       alert(`${title} added to cart.`);
       window.dispatchEvent(new Event("cartUpdated"));
+      navigate("/cart");
     } catch (error) {
       console.log("Add to cart failed:", error);
       if (error.response?.status === 401) {
@@ -66,7 +67,7 @@ const ProductDetail = () => {
       Loading product details...
     </div>
   );
-  
+
   if (!product) return (
     <div className="max-w-[1200px] mx-auto p-10 text-center text-gray-500 font-sans">
       Product not found.
@@ -74,23 +75,23 @@ const ProductDetail = () => {
   );
 
   const title = product.title || product.product?.title || product.name || "Product";
-  
+
   // Extremely robust image detection
-  const rawImage = product.image || 
-                   (product.images && product.images.length > 0 ? (product.images[0].image || product.images[0].file) : null) ||
-                   product.latest_image?.image || 
-                   product.product?.image || 
-                   product.product?.latest_image?.image || 
-                   product.variation?.image || 
-                   product.variation?.latest_image?.image;
-                   
+  const rawImage = product.image ||
+    (product.images && product.images.length > 0 ? (product.images[0].image || product.images[0].file) : null) ||
+    product.latest_image?.image ||
+    product.product?.image ||
+    product.product?.latest_image?.image ||
+    product.variation?.image ||
+    product.variation?.latest_image?.image;
+
   console.log("PRODUCT DETAIL DATA:", product);
   console.log("DETECTED IMAGE PATH:", rawImage);
 
-  const imageUrl = rawImage 
+  const imageUrl = rawImage
     ? (rawImage.startsWith('http') ? rawImage : `${IMAGE_BASE_URL}${rawImage}`)
     : PLACEHOLDER_IMAGE;
-    
+
   const price = product.active_price?.price || product.price || 0;
   const mrp = product.active_price?.mrp || product.mrp || price;
   const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
@@ -147,14 +148,14 @@ const ProductDetail = () => {
           <div className="flex flex-col gap-4">
             <h4 className="font-bold text-gray-700">Quantity</h4>
             <div className="flex items-center gap-4 bg-white border border-gray-200 w-fit p-1 rounded-xl shadow-sm">
-              <button 
+              <button
                 className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors border-none bg-transparent cursor-pointer"
                 onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
               >
                 <Minus size={18} />
               </button>
               <span className="text-lg font-bold min-w-[30px] text-center">{quantity}</span>
-              <button 
+              <button
                 className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors border-none bg-transparent cursor-pointer"
                 onClick={() => setQuantity(prev => prev + 1)}
               >
@@ -164,15 +165,12 @@ const ProductDetail = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 mt-2">
-            <button 
+            <button
               className="flex-1 bg-[#E60023] text-white h-14 rounded-2xl font-bold text-lg transition-all hover:bg-[#cc001f] hover:-translate-y-0.5 active:scale-95 shadow-md border-none cursor-pointer flex items-center justify-center gap-2"
               onClick={handleAddToCart}
             >
               <ShoppingCart size={22} />
               Add to Cart
-            </button>
-            <button className="flex-1 bg-[#111] text-white h-14 rounded-2xl font-bold text-lg transition-all hover:bg-[#333] hover:-translate-y-0.5 active:scale-95 shadow-md border-none cursor-pointer">
-              Buy Now
             </button>
           </div>
 

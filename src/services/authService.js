@@ -1,8 +1,14 @@
 import API from "./api";
 
+// LOGIN USER
 export const loginUser = (mobile, password) => {
   return API.post("/login", {
-    mobile: mobile,
-    password: password,
+    mobile,
+    password,
   });
+};
+
+// REGISTER USER
+export const registerAPI = (data) => {
+  return API.post("/auth/register", data);
 };

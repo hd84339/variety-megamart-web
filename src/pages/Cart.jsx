@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingBag, Trash2, Plus, Minus, ArrowLeft, ShoppingCart, CreditCard, ShieldCheck } from "lucide-react";
+import { ShoppingBag, Trash2, Plus, Minus, ArrowLeft, ShoppingCart, CreditCard, ShieldCheck, Banknote, CheckCircle2 } from "lucide-react";
 import { getCartAPI, deleteCartAPI, addToCartAPI } from "../services/cartService";
 import { createOrderAPI } from "../services/orderService";
 
@@ -11,6 +11,7 @@ const Cart = () => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [paymentMethod, setPaymentMethod] = useState("COD");
 
   useEffect(() => {
     loadCart();
@@ -75,27 +76,27 @@ const Cart = () => {
     alert("Failed to remove item. Please try refreshing the page.");
   };
 
-const updateQuantity = async (item, delta) => {
-  const variationId = item.variation_id || item.product_variation_id;
-  const productId = item.product_id || item.product?.id;
+  const updateQuantity = async (item, delta) => {
+    const variationId = item.variation_id || item.product_variation_id;
+    const productId = item.product_id || item.product?.id;
 
-  const newQuantity = item.quantity + delta;
+    const newQuantity = item.quantity + delta;
 
-  if (newQuantity <= 0) {
-    await removeItem(item);
-    return;
-  }
+    if (newQuantity <= 0) {
+      await removeItem(item);
+      return;
+    }
 
-  try {
-    // 🔥 SEND DELTA (+1 or -1) AS API IS ADDITIVE
-    await addToCartAPI(productId, variationId, delta);
+    try {
+      // 🔥 API IS 'SET QUANTITY' (NOT ADDITIVE)
+      await addToCartAPI(productId, variationId, newQuantity);
 
-    await loadCart();
-    window.dispatchEvent(new Event("cartUpdated"));
-  } catch (err) {
-    console.log("UPDATE QTY ERROR:", err.response?.data || err.message);
-  }
-};
+      await loadCart();
+      window.dispatchEvent(new Event("cartUpdated"));
+    } catch (err) {
+      console.log("UPDATE QTY ERROR:", err.response?.data || err.message);
+    }
+  };
 
   const calculateSubtotal = () => {
     return cart.reduce((total, item) => {
@@ -143,7 +144,7 @@ const updateQuantity = async (item, delta) => {
 
       console.log("SENDING ORDER PAYLOAD:", orderPayload);
       const res = await createOrderAPI(orderPayload);
-      
+
       console.log("ORDER RESPONSE:", res.data);
       alert("Order placed successfully!");
       loadCart();
@@ -151,10 +152,10 @@ const updateQuantity = async (item, delta) => {
       navigate("/orders");
     } catch (err) {
       console.log("ORDER ERROR FULL RESPONSE:", err.response?.data);
-      const errorMsg = err.response?.data?.message || 
-                       err.response?.data?.error || 
-                       JSON.stringify(err.response?.data) ||
-                       "Failed to place order. Please check all fields.";
+      const errorMsg = err.response?.data?.message ||
+        err.response?.data?.error ||
+        JSON.stringify(err.response?.data) ||
+        "Failed to place order. Please check all fields.";
       alert(errorMsg);
     }
   };
@@ -248,7 +249,10 @@ const updateQuantity = async (item, delta) => {
                       <div className="flex items-center bg-gray-100 rounded-lg p-1">
                         <button
                           className="w-7 h-7 bg-white rounded-md flex items-center justify-center cursor-pointer transition-colors hover:bg-gray-200 border-none shadow-sm"
-                          onClick={() => updateQuantity(item, -1)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeItem(item);
+                          }}
                         >
                           <Minus size={14} />
                         </button>
@@ -275,7 +279,55 @@ const updateQuantity = async (item, delta) => {
                 </div>
               );
             })}
+
+            {/* Payment Method Selection */}
+            <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm mt-8">
+              <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <CreditCard className="text-[#E60023]" size={24} />
+                Select Payment Method
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Cash on Delivery Option */}
+                <div 
+                  onClick={() => setPaymentMethod("COD")}
+                  className={`group relative flex items-center gap-5 p-6 rounded-[2rem] border-2 cursor-pointer transition-all duration-300 ${
+                    paymentMethod === "COD" 
+                    ? "border-[#E60023] bg-red-50/30 ring-4 ring-red-50" 
+                    : "border-gray-100 hover:border-gray-200 hover:bg-gray-50/50"
+                  }`}
+                >
+                  <div className={`p-4 rounded-2xl transition-colors ${paymentMethod === "COD" ? "bg-[#E60023] text-white" : "bg-gray-100 text-gray-500 group-hover:bg-gray-200"}`}>
+                    <Banknote size={28} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-extrabold text-gray-900 text-lg">Cash on Delivery</div>
+                    <div className="text-sm text-gray-500 font-medium mt-0.5">Pay when you receive</div>
+                  </div>
+                  {paymentMethod === "COD" && <CheckCircle2 className="text-[#E60023] animate-in zoom-in duration-300" size={24} />}
+                </div>
+
+                {/* Online Payment Option */}
+                <div 
+                  onClick={() => setPaymentMethod("ONLINE")}
+                  className={`group relative flex items-center gap-5 p-6 rounded-[2rem] border-2 cursor-pointer transition-all duration-300 ${
+                    paymentMethod === "ONLINE" 
+                    ? "border-[#E60023] bg-red-50/30 ring-4 ring-red-50" 
+                    : "border-gray-100 hover:border-gray-200 hover:bg-gray-50/50"
+                  }`}
+                >
+                  <div className={`p-4 rounded-2xl transition-colors ${paymentMethod === "ONLINE" ? "bg-[#E60023] text-white" : "bg-gray-100 text-gray-500 group-hover:bg-gray-200"}`}>
+                    <CreditCard size={28} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-extrabold text-gray-900 text-lg">Online Payment</div>
+                    <div className="text-sm text-gray-500 font-medium mt-0.5">Cards, UPI, or NetBanking</div>
+                  </div>
+                  {paymentMethod === "ONLINE" && <CheckCircle2 className="text-[#E60023] animate-in zoom-in duration-300" size={24} />}
+                </div>
+              </div>
+            </div>
           </div>
+
 
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 sticky top-[100px]">
             <h3 className="text-xl font-bold mb-5 pb-4 border-b border-gray-100">Order Summary</h3>
@@ -305,10 +357,10 @@ const updateQuantity = async (item, delta) => {
 
 
             <button className="w-full bg-[#E60023] text-white py-4 rounded-xl font-semibold text-lg mt-6 transition-all hover:bg-[#cc001f] active:scale-95 flex items-center justify-center gap-2 border-none cursor-pointer"
-              onClick={placeOrder}
+              onClick={() => navigate("/checkout", { state: { paymentMethod } })}
             >
               <CreditCard size={20} />
-              Place Order
+               Proceed to Checkout
             </button>
 
             <div className="mt-5 flex items-center gap-2 text-[0.8rem] text-gray-500">
