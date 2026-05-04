@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
+import Home from "./pages/HomePage/Home";
+import ProductDetail from "./pages/ProductDetailPage/ProductDetail";
+import Cart from "./pages/CartPage/Cart";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup"; // Don't forget this!
 import Orders from "./pages/Orders";
-import Checkout from "./pages/Checkout";
+import Checkout from "./pages/CheckoutPage/Checkout";
 import Profile from "./pages/Profile";
+import Category from "./pages/Category";
+import SubCategory from "./pages/SubCategoryPage/SubCategory";
 
 function App() {
   // Use state so React re-renders when the user logs in/out
@@ -30,37 +32,41 @@ function App() {
         {/* Public Routes - Anyone can see these */}
         <Route path="/" element={<Home />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/category/:id" element={<Category />} />
+<Route path="/subcategory/:id" element={<SubCategory />} />
 
         {/* Auth Routes - Only for logged-out users */}
         {!token ? (
           <>
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Signup />} />
+            <Route path="/signup" element={<Signup />} />
           </>
         ) : (
           /* Redirect login/signup to home if already logged in */
+
           <>
+
             <Route path="/login" element={<Navigate to="/" />} />
-            <Route path="/register" element={<Navigate to="/" />} />
+            <Route path="/signup" element={<Navigate to="/" />} />
           </>
         )}
 
         {/* Private Routes - Only for logged-in users */}
-        <Route 
-          path="/cart" 
-          element={token ? <Cart /> : <Navigate to="/login" />} 
+        <Route
+          path="/cart"
+          element={token ? <Cart /> : <Navigate to="/login" />}
         />
-        <Route 
-          path="/checkout" 
-          element={token ? <Checkout /> : <Navigate to="/login" />} 
+        <Route
+          path="/checkout"
+          element={token ? <Checkout /> : <Navigate to="/login" />}
         />
-        <Route 
-          path="/orders" 
-          element={token ? <Orders /> : <Navigate to="/login" />} 
+        <Route
+          path="/orders"
+          element={token ? <Orders /> : <Navigate to="/login" />}
         />
-        <Route 
-          path="/profile" 
-          element={token ? <Profile /> : <Navigate to="/login" />} 
+        <Route
+          path="/profile"
+          element={token ? <Profile /> : <Navigate to="/login" />}
         />
 
         {/* Fallback for unknown routes */}

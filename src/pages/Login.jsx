@@ -18,6 +18,7 @@ const Login = () => {
       console.log("FULL RESPONSE:", res.data);
 
       const token = res.data.token || res.data.data?.token || res.data.access_token;
+      console.log("TOKEN:", token);
 
       if (!token) {
         alert("Authentication failed: Token not found.");
@@ -31,6 +32,7 @@ const Login = () => {
       navigate("/");
     } catch (err) {
       console.error(err);
+      console.log("LOGIN ERROR RESPONSE:", err.response?.data);
       alert(err.response?.data?.message || "Login failed. Please check your credentials.");
     } finally {
       setLoading(false);

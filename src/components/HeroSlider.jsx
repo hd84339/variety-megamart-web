@@ -30,11 +30,10 @@ const HeroSlider = ({ banners = [] }) => {
       <div className="relative overflow-hidden group h-[250px] md:h-[500px] lg:h-[600px] rounded-3xl shadow-2xl border-4 border-white">
         {/* Slides Container */}
         <div 
-          className="flex transition-transform duration-1000 cubic-bezier(0.4, 0, 0.2, 1) h-full"
+          className="flex transition-transform duration-1000 ease-in-out h-full"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {banners.map((item, index) => {
-            console.log(`BANNER ${index} DATA:`, item);
             const rawImage = item.image || item.banner || item.file || item.latest_image?.image;
             const imageUrl = rawImage?.startsWith("http") 
               ? rawImage 
@@ -45,7 +44,7 @@ const HeroSlider = ({ banners = [] }) => {
                 <img
                   src={imageUrl}
                   alt={`Banner ${index + 1}`}
-                  className={`w-full h-full object-cover transition-all duration-[8000ms] ease-linear ${
+                  className={`w-full h-full object-cover transition-transform duration-[8000ms] ease-linear ${
                     currentIndex === index ? "scale-110" : "scale-100"
                   }`}
                   onError={(e) => {

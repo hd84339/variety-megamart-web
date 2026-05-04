@@ -7,3 +7,7 @@ export const getHomeData = () => {
 export const getProductDetail = (id) => {
   return API.get(`/getVariationDetail/${id}`);
 };
+
+export const getProductsByCategory = (categoryId) => {
+  return API.get(`/getProduct?categoryId=${categoryId}`);
+};
