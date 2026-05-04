@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react";
 
 const IMAGE_BASE = "https://project.varietymegastore.com/uploads/mainCategory/";
 
-const HomeFeaturedCategory = ({ categoryId, title, subtitle }) => {
+const HomeFeaturedCategory = ({ categoryId, title, subtitle, theme = "light" }) => {
   const [subCats, setSubCats] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const HomeFeaturedCategory = ({ categoryId, title, subtitle }) => {
     const load = async () => {
       try {
         const res = await getSubCategories(categoryId);
-        setSubCats((res.data.data || res.data || []).slice(0, 6)); // Show top 6
+        setSubCats((res.data.data || res.data || []).slice(0, 8)); // Show top 8
       } catch (err) {
         console.error("Featured category error:", err);
       } finally {
@@ -26,43 +26,70 @@ const HomeFeaturedCategory = ({ categoryId, title, subtitle }) => {
 
   if (loading || subCats.length === 0) return null;
 
-  return (
-    <div className="max-w-[1200px] mx-auto py-16 px-5 border-t border-gray-100">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h2 className="text-3xl font-black text-gray-900 tracking-tight">{title}</h2>
-          <p className="text-gray-500 font-medium mt-1">{subtitle}</p>
-        </div>
-        <button 
-            onClick={() => navigate(`/category/${categoryId}`)}
-            className="flex items-center gap-2 text-[#E60023] font-bold hover:underline border-none bg-transparent cursor-pointer group"
-        >
-            View All <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-        </button>
-      </div>
+  // Theme-based styling
+  const themes = {
+    light: {
+        container: "bg-transparent",
+        card: "bg-white",
+        text: "text-gray-900"
+    },
+    mixed: {
+        container: "bg-[#F7F3FF]", // Soft Lavender/Mixed Art theme
+        card: "bg-white",
+        text: "text-[#2D1B5E]"
+    },
+    office: {
+        container: "bg-[#F1F5F9]", // Professional Gray theme
+        card: "bg-white",
+        text: "text-[#0F172A]"
+    },
+    alternate: {
+        container: "bg-[#FFF9F5]", // Warm Peach theme
+        card: "bg-white",
+        text: "text-gray-900"
+    },
+    teak: {
+        container: "bg-[#FAFAF5]", // Earthy Teak theme
+        card: "bg-white",
+        text: "text-[#4A3728]"
+    }
+  };
 
-      <div className="flex gap-6 overflow-x-auto pb-8 snap-x no-scrollbar scroll-smooth">
-        {subCats.map((sub) => (
-          <div
-            key={sub.id}
-            className="min-w-[180px] md:min-w-[200px] snap-start group cursor-pointer flex flex-col"
-            onClick={() => navigate(`/subcategory/${sub.id}`)}
-          >
-            <div className="relative w-full aspect-square mb-4 overflow-hidden rounded-[2.5rem] bg-white shadow-md shadow-gray-100 transition-all duration-500 group-hover:shadow-xl group-hover:shadow-red-50 group-hover:-translate-y-2 border border-gray-100/50">
-              <img
-                src={`${IMAGE_BASE}${sub.image}`}
-                alt={sub.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+  const currentTheme = themes[theme] || themes.light;
+
+  return (
+    <section className={`py-12 ${currentTheme.container} transition-colors duration-700`}>
+      <div className="max-w-[1400px] mx-auto px-5">
+        <div className="mb-8 text-center md:text-left">
+            <h2 className={`text-2xl md:text-3xl font-black ${currentTheme.text} tracking-tighter uppercase opacity-90`}>
+                {title}
+            </h2>
+            <div className="h-1 w-12 bg-[#E60023] mt-2 mx-auto md:mx-0 rounded-full" />
+        </div>
+
+        <div className={`flex gap-6 overflow-x-auto pb-8 snap-x no-scrollbar scroll-smooth ${subCats.length < 5 ? 'md:justify-center' : ''}`}>
+          {subCats.map((sub) => (
+            <div
+              key={sub.id}
+              className="min-w-[180px] md:min-w-[200px] snap-start group cursor-pointer flex flex-col items-center"
+              onClick={() => navigate(`/subcategory/${sub.id}`)}
+            >
+              <div className={`relative w-full aspect-square mb-4 overflow-hidden rounded-[2rem] ${currentTheme.card} shadow-lg shadow-black/5 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-black/10 group-hover:-translate-y-2 border border-gray-100/50`}>
+                <img
+                  src={`${IMAGE_BASE}${sub.image}`}
+                  alt={sub.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-all duration-500" />
+              </div>
+              <p className={`text-[0.9rem] md:text-base font-black ${currentTheme.text} transition-colors group-hover:text-[#E60023] line-clamp-1 uppercase tracking-tight text-center px-2`}>
+                {sub.name}
+              </p>
             </div>
-            <p className="text-base font-bold text-gray-900 transition-colors group-hover:text-[#E60023] line-clamp-1 mt-1">
-              {sub.name}
-            </p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

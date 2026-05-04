@@ -57,7 +57,12 @@ const Home = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
+    <div className="bg-[#fcfcfc] min-h-screen font-sans overflow-x-hidden relative">
+      {/* Premium Background Accents */}
+      <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-b from-[#FFF5F6] to-transparent pointer-events-none -z-10" />
+      <div className="absolute top-[20%] -right-20 w-[500px] h-[500px] bg-red-50/50 blur-[120px] rounded-full pointer-events-none -z-10" />
+      <div className="absolute top-[60%] -left-20 w-[400px] h-[400px] bg-blue-50/30 blur-[100px] rounded-full pointer-events-none -z-10" />
+
       <HomeHero banners={banners} />
       <HomeProducts products={products} />
       
@@ -65,14 +70,24 @@ const Home = () => {
       {categories
         .filter(cat => cat.id)
         .slice(0, 4)
-        .map((cat) => (
-          <HomeFeaturedCategory 
-            key={cat.id}
-            categoryId={cat.id} 
-            title={cat.name} 
-            subtitle={`Explore our handpicked ${cat.name} collection`} 
-          />
-        ))
+        .map((cat, index) => {
+          // Assign themes based on category name or index
+          let theme = "light";
+          if (cat.name.toUpperCase().includes("MIXED MEDIA")) theme = "mixed";
+          else if (cat.name.toUpperCase().includes("STATIONERY")) theme = "office";
+          else if (cat.name.toUpperCase().includes("TEAKWOOD")) theme = "teak";
+          else if (index % 2 !== 0) theme = "alternate";
+
+          return (
+            <HomeFeaturedCategory 
+              key={cat.id}
+              categoryId={cat.id} 
+              title={cat.name} 
+              subtitle={`Explore our handpicked ${cat.name} collection`} 
+              theme={theme}
+            />
+          );
+        })
       }
 
       <HomeCategories categories={categories} />
