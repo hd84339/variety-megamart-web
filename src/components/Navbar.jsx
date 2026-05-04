@@ -94,10 +94,6 @@ const Navbar = () => {
             </div>
           </button>
 
-          {/* Mobile Menu Trigger */}
-          <button className="sm:hidden p-2.5 text-gray-600 bg-gray-50 border-none cursor-pointer rounded-2xl hover:bg-red-50 hover:text-[#E60023] transition-all">
-            <Menu size={24} />
-          </button>
         </div>
       </div>
     </nav>
@@ -106,4 +102,4 @@ const Navbar = () => {
 
 
 
-export default Navbar;
+export default Navbar;
