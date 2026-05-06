@@ -4,6 +4,7 @@ import { getProductDetail } from "../../services/productService";
 import { addToCartAPI } from "../../services/cartService";
 import ImageShowcase from "./components/ImageShowcase";
 import ProductInfo from "./components/ProductInfo";
+import { addToWishlistAPI } from "../../services/wishlistService";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -44,6 +45,7 @@ const ProductDetail = () => {
       }
     }
   };
+
 
   if (loading) return (
     <div className="max-w-[1200px] mx-auto p-10 text-center animate-pulse text-gray-500 font-sans">

@@ -7,11 +7,22 @@ import {
   ShieldCheck, 
   RefreshCw 
 } from "lucide-react";
+import { addToWishlistAPI } from "../../../services/wishlistService";
 
 const ProductInfo = ({ product, title, quantity, setQuantity, handleAddToCart }) => {
   const price = product.active_price?.price || product.price || 0;
   const mrp = product.active_price?.mrp || product.mrp || price;
   const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+
+    const handleWishlist = async () => {
+    try {
+      await addToWishlistAPI(product.product_id || product.id);
+      alert("Added to wishlist ❤️");
+      window.dispatchEvent(new Event("wishlistUpdated"));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -75,6 +86,13 @@ const ProductInfo = ({ product, title, quantity, setQuantity, handleAddToCart })
           <ShoppingCart size={22} />
           Add to Cart
         </button>
+         {/* ❤️ Wishlist */}
+  <button
+    className="flex-1 border h-14 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-gray-100"
+    onClick={handleWishlist}
+  >
+    ❤️ Wishlist
+  </button>
       </div>
 
       <div className="grid grid-cols-3 gap-3 mt-4 pt-6 border-t border-gray-100">

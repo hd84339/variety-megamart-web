@@ -2,12 +2,31 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Eye, Heart } from "lucide-react";
 import { addToCartAPI } from "../services/cartService";
+import { addToWishlistAPI } from "../services/wishlistService";
 
 const IMAGE_BASE_URL = "https://project.varietymegastore.com/uploads/variations/";
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/150";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
+
+  const handleWishlist = async (e) => {
+    e.stopPropagation();
+    const productId = product.product_id ?? product.product?.id ?? product.id;
+
+    try {
+      await addToWishlistAPI(productId);
+      alert("Added to wishlist ❤️");
+      window.dispatchEvent(new Event("wishlistUpdated"));
+    } catch (error) {
+      if (error.response?.status === 401) {
+        alert("Please login first");
+        navigate("/login");
+      } else {
+        alert("Failed to add to wishlist.");
+      }
+    }
+  };
 
   const title = product.title || 
                 product.product?.title || 
@@ -62,10 +81,19 @@ const ProductCard = ({ product }) => {
         
         {/* Hover Overlay Actions */}
         <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center gap-3">
-            <button className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 shadow-xl border-none cursor-pointer transform translate-y-10 group-hover:translate-y-0 transition-transform duration-500 hover:bg-[#E60023] hover:text-white">
+            <button 
+              className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 shadow-xl border-none cursor-pointer transform translate-y-10 group-hover:translate-y-0 transition-transform duration-500 hover:bg-[#E60023] hover:text-white"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/product/${product.id}`);
+              }}
+            >
                 <Eye size={18} />
             </button>
-            <button className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 shadow-xl border-none cursor-pointer transform translate-y-10 group-hover:translate-y-0 transition-transform duration-500 delay-75 hover:bg-[#E60023] hover:text-white">
+            <button 
+              className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 shadow-xl border-none cursor-pointer transform translate-y-10 group-hover:translate-y-0 transition-transform duration-500 delay-75 hover:bg-[#E60023] hover:text-white"
+              onClick={handleWishlist}
+            >
                 <Heart size={18} />
             </button>
         </div>

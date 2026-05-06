@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, User, ShoppingCart, Menu } from "lucide-react";
+import { Search, User, ShoppingCart, Heart, Menu } from "lucide-react";
 import { getCartAPI } from "../services/cartService";
+import { getWishlistAPI } from "../services/wishlistService";
+import { getProfile } from "../services/authService";
 import logo from "../assets/logo.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     const fetchCartCount = async () => {
@@ -20,21 +24,52 @@ const Navbar = () => {
       }
     };
 
-    const checkAuth = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
+    const fetchWishlistCount = async () => {
+      try {
+        const res = await getWishlistAPI();
+        const items = res.data.data || res.data.wishlist || res.data.products || res.data || [];
+        setWishlistCount(Array.isArray(items) ? items.length : 0);
+      } catch (err) {
+        console.error("❌ Navbar wishlist fetch error:", err.response?.data || err);
+
+
+      }
     };
 
-    fetchCartCount();
+    const fetchUserProfile = async () => {
+      try {
+        const res = await getProfile();
+        const user = res.data.user || res.data.data || res.data;
+        setUserName(user?.name || user?.username || "Profile");
+      } catch (err) {
+        console.log("Navbar profile fetch error:", err);
+      }
+    };
+
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token);
+      if (!token) setUserName("");
+    };
+
+    if (isLoggedIn) {
+      fetchCartCount();
+      fetchWishlistCount();
+      fetchUserProfile();
+    }
+    
     checkAuth();
     window.addEventListener("cartUpdated", fetchCartCount);
+    window.addEventListener("wishlistUpdated", fetchWishlistCount);
     window.addEventListener("cartUpdated", checkAuth);
     window.addEventListener("storage", checkAuth);
     return () => {
       window.removeEventListener("cartUpdated", fetchCartCount);
+      window.removeEventListener("wishlistUpdated", fetchWishlistCount);
       window.removeEventListener("cartUpdated", checkAuth);
       window.removeEventListener("storage", checkAuth);
     };
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <nav className="sticky top-0 z-[1000] bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-[0_1px_20px_rgba(0,0,0,0.02)] transition-all duration-300">
@@ -72,7 +107,27 @@ const Navbar = () => {
             </div>
             <div className="hidden lg:flex flex-col items-start leading-none text-left">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Account</span>
-              <span className="text-sm font-extrabold">{isLoggedIn ? "My Profile" : "Sign In"}</span>
+              <span className="text-sm font-extrabold">
+                {isLoggedIn ? (userName || "My Profile") : "Sign In"}
+              </span>
+            </div>
+          </button>
+
+          <button 
+            className="relative flex items-center gap-2.5 p-2 rounded-2xl text-gray-700 cursor-pointer transition-all hover:bg-red-50 hover:text-[#E60023] group border-none bg-transparent" 
+            onClick={() => navigate("/wishlist")}
+          >
+            <div className="p-2.5 rounded-xl bg-gray-50 group-hover:bg-white transition-colors relative">
+              <Heart size={22} className="transition-transform group-hover:scale-110" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#E60023] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow-md animate-bounce">
+                  {wishlistCount}
+                </span>
+              )}
+            </div>
+            <div className="hidden lg:flex flex-col items-start leading-none text-left">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Watchlist</span>
+              <span className="text-sm font-extrabold">Favorites</span>
             </div>
           </button>
 
@@ -100,6 +155,5 @@ const Navbar = () => {
   );
 };
 
-
-
 export default Navbar;
+

@@ -6,7 +6,7 @@ import Home from "./pages/HomePage/Home";
 import ProductDetail from "./pages/ProductDetailPage/ProductDetail";
 import Cart from "./pages/CartPage/Cart";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup"; // Don't forget this!
+import Signup from "./pages/Signup"; 
 import Orders from "./pages/OrdersPage/Orders";
 import Checkout from "./pages/CheckoutPage/Checkout";
 import Profile from "./pages/ProfilePage/Profile";
@@ -14,8 +14,11 @@ import Category from "./pages/Category";
 import SubCategory from "./pages/SubCategoryPage/SubCategory";
 import OrderDetail from "./pages/OrderDetailPage/OrderDetail";
 import PolicyPage from "./pages/PolicyPage/PolicyPage";
+import Wishlist from "./pages/WishlistPage/Wishlist";
+import Address from "./pages/AddressPage/Address";
 
 function App() {
+
   // Use state so React re-renders when the user logs in/out
   const [token, setToken] = useState(localStorage.getItem("token"));
 
@@ -79,6 +82,15 @@ function App() {
           path="/order/:id"
           element={token ? <OrderDetail /> : <Navigate to="/login" />} 
         />
+        <Route
+          path="/wishlist"
+          element={token ? <Wishlist /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/address"
+          element={token ? <Address /> : <Navigate to="/login" />}
+        />
+
 
         {/* Fallback for unknown routes */}
         <Route path="*" element={<Navigate to="/" />} />

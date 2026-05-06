@@ -20,3 +20,8 @@ export const registerAPI = (data) => {
   
   return API.post("/register", formData);
 };
+
+// GET USER PROFILE
+export const getProfile = () => {
+  return API.get("/auth/profile");
+};

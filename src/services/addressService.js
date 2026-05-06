@@ -7,3 +7,10 @@ export const addAddressAPI = (data) => {
 export const getAddressAPI = () => {
   return API.get("/auth/getUserSavedAddress");
 };
+
+export const deleteAddressAPI = (id) => {
+  return API.post("/auth/deleteUserSavedAddress", { id, address_id: id });
+};
+
+
+
