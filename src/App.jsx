@@ -16,6 +16,8 @@ import OrderDetail from "./pages/OrderDetailPage/OrderDetail";
 import PolicyPage from "./pages/PolicyPage/PolicyPage";
 import Wishlist from "./pages/WishlistPage/Wishlist";
 import Address from "./pages/AddressPage/Address";
+import Search from "./pages/SearchPage/Search";
+import FloatingChat from "./components/FloatingChat";
 
 function App() {
 
@@ -43,6 +45,8 @@ function App() {
          <Route path="/privacy-policy" element={<PolicyPage />} />
          <Route path="/terms-of-service" element={<PolicyPage />} />
          <Route path="/return-policy" element={<PolicyPage />} />
+         <Route path="/search" element={<Search />} />
+
 
         {/* Auth Routes - Only for logged-out users */}
         {!token ? (
@@ -96,6 +100,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />
+      <FloatingChat />
     </BrowserRouter>
   );
 }

@@ -11,3 +11,7 @@ export const getProductDetail = (id) => {
 export const getProductsByCategory = (categoryId) => {
   return API.get(`/getProduct?categoryId=${categoryId}`);
 };
+
+export const searchProducts = (query) => {
+  return API.get(`/getProduct?search=${query}`);
+};
