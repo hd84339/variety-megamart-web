@@ -10,6 +10,36 @@ const Wishlist = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const loadWishlist = async () => {
+    setLoading(true);
+    try {
+      const res = await getWishlistAPI();
+      console.log("🔍 WISHLIST RESPONSE:", res.data);
+
+      let items = [];
+      if (Array.isArray(res.data)) {
+        items = res.data;
+      } else if (res.data?.data && Array.isArray(res.data.data)) {
+        items = res.data.data;
+      } else if (res.data?.wishlist && Array.isArray(res.data.wishlist)) {
+        items = res.data.wishlist;
+      } else if (res.data?.wishlist?.items && Array.isArray(res.data.wishlist.items)) {
+        items = res.data.wishlist.items;
+      } else if (res.data?.products && Array.isArray(res.data.products)) {
+        items = res.data.products;
+      } else if (res.data?.items && Array.isArray(res.data.items)) {
+        items = res.data.items;
+      }
+
+      setWishlist(Array.isArray(items) ? items : []);
+    } catch (err) {
+      console.error("❌ Wishlist page fetch error:", err);
+      setWishlist([]); 
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     // Load wishlist on component mount
     loadWishlist();
@@ -20,36 +50,6 @@ const Wishlist = () => {
       window.removeEventListener("wishlistUpdated", refreshHandler);
     };
   }, []);
-
-const loadWishlist = async () => {
-  setLoading(true);
-  try {
-    const res = await getWishlistAPI();
-    console.log("🔍 WISHLIST RESPONSE:", res.data);
-
-    let items = [];
-    if (Array.isArray(res.data)) {
-      items = res.data;
-    } else if (res.data?.data && Array.isArray(res.data.data)) {
-      items = res.data.data;
-    } else if (res.data?.wishlist && Array.isArray(res.data.wishlist)) {
-      items = res.data.wishlist;
-    } else if (res.data?.wishlist?.items && Array.isArray(res.data.wishlist.items)) {
-      items = res.data.wishlist.items;
-    } else if (res.data?.products && Array.isArray(res.data.products)) {
-      items = res.data.products;
-    } else if (res.data?.items && Array.isArray(res.data.items)) {
-      items = res.data.items;
-    }
-
-    setWishlist(Array.isArray(items) ? items : []);
-  } catch (err) {
-    console.error("❌ Wishlist page fetch error:", err);
-    setWishlist([]); 
-  } finally {
-    setLoading(false);
-  }
-};
 
 
   const handleRemove = async (e, id) => {

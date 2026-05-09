@@ -3,7 +3,6 @@ import API from "./api";
 // Main Categoies
 export const getCategories = () => {
     return API.get("/getMainCategories");
-    console.log("CATEGORIES API RESPONSE:", res.data);
 };
 
 //Sub Categories

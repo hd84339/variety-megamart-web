@@ -12,5 +12,9 @@ export const deleteAddressAPI = (id) => {
   return API.post("/auth/deleteUserSavedAddress", { id, address_id: id });
 };
 
+export const editAddressAPI = (data) => {
+  return API.post("/auth/editUserSavedAddress", data);
+};
+
 
 

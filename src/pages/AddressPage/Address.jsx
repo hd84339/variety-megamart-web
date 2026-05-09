@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { MapPin, Plus, ArrowLeft, Trash2 } from "lucide-react";
+import { MapPin, Plus, ArrowLeft, Trash2, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getAddressAPI, addAddressAPI, deleteAddressAPI } from "../../services/addressService";
+import { getAddressAPI, addAddressAPI, deleteAddressAPI, editAddressAPI } from "../../services/addressService";
 import AddressForm from "../CheckoutPage/components/AddressForm";
 
 const Address = () => {
@@ -9,6 +9,7 @@ const Address = () => {
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
   const emptyForm = {
     first_name: "",
@@ -49,10 +50,16 @@ const Address = () => {
     }
     try {
       setLoading(true);
-      await addAddressAPI(addressForm);
-      alert("Address saved successfully!");
+      if (editingId) {
+        await editAddressAPI({ ...addressForm, address_id: editingId });
+        alert("Address updated successfully!");
+      } else {
+        await addAddressAPI(addressForm);
+        alert("Address saved successfully!");
+      }
       setAddressForm(emptyForm);
       setShowForm(false);
+      setEditingId(null);
       await loadAddresses();
     } catch (err) {
       console.error("SAVE ERROR:", err.response?.data);
@@ -60,6 +67,21 @@ const Address = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEdit = (addr) => {
+    setAddressForm({
+      first_name: addr.first_name || "",
+      last_name: addr.last_name || "",
+      email: addr.email || "",
+      mobile: addr.mobile || "",
+      locality: addr.locality || "",
+      address: addr.address || "",
+      postcode: addr.postcode || "",
+    });
+    setEditingId(addr.id);
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async (id) => {
@@ -96,7 +118,7 @@ const Address = () => {
             className="flex items-center gap-2 bg-[#E60023] text-white px-6 py-3 rounded-2xl font-bold hover:bg-black transition-all shadow-lg shadow-red-100 border-none cursor-pointer active:scale-95"
           >
             <Plus size={20} />
-            Add New
+            {editingId ? "Edit Address" : "Add New"}
           </button>
         )}
       </div>
@@ -110,7 +132,11 @@ const Address = () => {
              loading={loading} 
            />
            <button 
-            onClick={() => setShowForm(false)}
+            onClick={() => {
+              setShowForm(false);
+              setEditingId(null);
+              setAddressForm(emptyForm);
+            }}
             className="mt-4 text-gray-400 font-bold hover:text-[#E60023] transition-colors border-none bg-transparent cursor-pointer ml-8"
            >
              Cancel
@@ -145,6 +171,13 @@ const Address = () => {
                 </div>
                 
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button 
+                    onClick={() => handleEdit(addr)}
+                    className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border-none cursor-pointer"
+                    title="Edit Address"
+                  >
+                    <Edit size={18} />
+                  </button>
                   <button 
                     onClick={() => handleDelete(addr.id)}
                     className="w-10 h-10 bg-red-50 text-[#E60023] rounded-xl flex items-center justify-center hover:bg-[#E60023] hover:text-white transition-all border-none cursor-pointer"

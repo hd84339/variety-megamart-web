@@ -2,7 +2,7 @@ import API from "./api";
 
 // GET WISHLIST
 export const getWishlistAPI = () => {
-  return API.get("/auth/wishlist"); 
+  return API.get("/auth/getWishlist"); 
 };
 
 
