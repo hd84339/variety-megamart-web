@@ -17,7 +17,6 @@ import PolicyPage from "./pages/PolicyPage/PolicyPage";
 import Wishlist from "./pages/WishlistPage/Wishlist";
 import Address from "./pages/AddressPage/Address";
 import Search from "./pages/SearchPage/Search";
-import FloatingChat from "./components/FloatingChat";
 
 function App() {
 
@@ -100,7 +99,6 @@ function App() {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />
-      <FloatingChat />
     </BrowserRouter>
   );
 }
