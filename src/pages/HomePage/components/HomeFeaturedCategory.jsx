@@ -67,14 +67,14 @@ const HomeFeaturedCategory = ({ categoryId, title, subtitle, theme = "light" }) 
             <div className="h-1 w-12 bg-[#E60023] mt-2 mx-auto md:mx-0 rounded-full" />
         </div>
 
-        <div className={`flex gap-6 overflow-x-auto pb-8 snap-x no-scrollbar scroll-smooth ${subCats.length < 5 ? 'md:justify-center' : ''}`}>
+        <div className={`flex gap-4 md:gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x scroll-smooth ${subCats.length < 5 ? 'md:justify-center' : ''}`}>
           {subCats.map((sub) => (
             <div
               key={sub.id}
-              className="min-w-[180px] md:min-w-[200px] snap-start group cursor-pointer flex flex-col items-center"
+              className="group cursor-pointer flex flex-col items-center flex-shrink-0 w-24 md:w-32 lg:w-40 snap-start"
               onClick={() => navigate(`/subcategory/${sub.id}`)}
             >
-              <div className={`relative w-full aspect-square mb-4 overflow-hidden rounded-[2rem] ${currentTheme.card} shadow-lg shadow-black/5 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-black/10 group-hover:-translate-y-2 border border-gray-100/50`}>
+              <div className={`relative w-full aspect-square mb-3 overflow-hidden rounded-[1.5rem] ${currentTheme.card} shadow-md shadow-black/5 transition-all duration-500 group-hover:shadow-lg group-hover:shadow-black/10 group-hover:-translate-y-1 border border-gray-100/50`}>
                 <img
                   src={`${IMAGE_BASE}${sub.image}`}
                   alt={sub.name}
@@ -82,7 +82,7 @@ const HomeFeaturedCategory = ({ categoryId, title, subtitle, theme = "light" }) 
                 />
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-all duration-500" />
               </div>
-              <p className={`text-[0.9rem] md:text-base font-black ${currentTheme.text} transition-colors group-hover:text-[#E60023] line-clamp-1 uppercase tracking-tight text-center px-2`}>
+              <p className={`text-xs md:text-sm font-black ${currentTheme.text} transition-colors group-hover:text-[#E60023] line-clamp-2 tracking-tight text-center px-2`}>
                 {sub.name}
               </p>
             </div>

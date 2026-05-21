@@ -16,14 +16,14 @@ const HomeCategories = ({ categories }) => {
         <button className="hidden md:block text-[#E60023] font-bold hover:underline">View All</button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+      <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x">
         {categories.map((cat) => (
           <div
             key={cat.id}
-            className="group cursor-pointer flex flex-col items-center"
+            className="group cursor-pointer flex flex-col items-center flex-shrink-0 w-24 md:w-32 lg:w-40 snap-start"
             onClick={() => navigate(`/category/${cat.id}`)}
           >
-            <div className="relative w-full aspect-square mb-4 overflow-hidden rounded-[2rem] bg-white shadow-lg shadow-gray-200/50 transition-all duration-500 group-hover:shadow-xl group-hover:shadow-red-100 group-hover:-translate-y-2 border border-gray-100">
+            <div className="relative w-full aspect-square mb-3 overflow-hidden rounded-[1.5rem] bg-white shadow-md shadow-gray-200/50 transition-all duration-500 group-hover:shadow-lg group-hover:shadow-red-100 group-hover:-translate-y-1 border border-gray-100">
               <img
                 src={`${IMAGE_BASE}${cat.image}`}
                 alt={cat.name}
@@ -31,7 +31,7 @@ const HomeCategories = ({ categories }) => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
-            <p className="text-sm font-bold text-gray-800 text-center transition-colors group-hover:text-[#E60023]">
+            <p className="text-xs md:text-sm font-bold text-gray-800 text-center transition-colors group-hover:text-[#E60023] line-clamp-2">
               {cat.name}
             </p>
           </div>
