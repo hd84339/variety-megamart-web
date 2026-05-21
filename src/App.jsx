@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import ScrollToTop from "./components/ScrollToTop";
 import Footer from "./components/Footer";
 import Home from "./pages/HomePage/Home";
 import ProductDetail from "./pages/ProductDetailPage/ProductDetail";
@@ -17,6 +18,7 @@ import PolicyPage from "./pages/PolicyPage/PolicyPage";
 import Wishlist from "./pages/WishlistPage/Wishlist";
 import Address from "./pages/AddressPage/Address";
 import Search from "./pages/SearchPage/Search";
+
 
 function App() {
 
@@ -35,6 +37,7 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar />
+      <ScrollToTop />
       <Routes>
         {/* Public Routes - Anyone can see these */}
         <Route path="/" element={<Home />} />

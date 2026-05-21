@@ -62,7 +62,6 @@ const Home = () => {
       <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-b from-[#FFF5F6] to-transparent pointer-events-none -z-10" />
       <div className="absolute top-[20%] -right-20 w-[500px] h-[500px] bg-red-50/50 blur-[120px] rounded-full pointer-events-none -z-10" />
       <div className="absolute top-[60%] -left-20 w-[400px] h-[400px] bg-blue-50/30 blur-[100px] rounded-full pointer-events-none -z-10" />
-
       <HomeHero banners={banners} />
       <HomeProducts products={products} />
       

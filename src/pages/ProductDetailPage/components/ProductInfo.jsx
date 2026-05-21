@@ -116,6 +116,60 @@ const ProductInfo = ({ product, title, quantity, setQuantity, handleAddToCart })
           {product.description || product.product?.description || "No description available for this product."}
         </div>
       </div>
+
+      {((product.product?.features || product.features)?.length > 0) && (
+        <div className="mt-4">
+          <h3 className="text-xl font-bold mb-3">Product Features</h3>
+          <ul className="list-disc pl-5 text-gray-600 leading-relaxed text-sm p-5 bg-white rounded-2xl border border-gray-100 space-y-1">
+            {(product.product?.features || product.features).map((item, index) => (
+              <li key={item.id || index}>{item.feature}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {((product.product?.informations || product.informations)?.length > 0) && (
+        <div className="mt-4">
+          <h3 className="text-xl font-bold mb-3">Product Information</h3>
+          <ul className="list-disc pl-5 text-gray-600 leading-relaxed text-sm p-5 bg-white rounded-2xl border border-gray-100 space-y-1">
+            {(product.product?.informations || product.informations).map((item, index) => (
+              <li key={item.id || index}>{item.information}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {(product.product?.return_policy || product.return_policy || product.product?.warranty || product.warranty || product.product?.days_of_return || product.days_of_return || product.product?.deliver_between || product.deliver_between) && (
+        <div className="mt-4">
+          <h3 className="text-xl font-bold mb-3">Policies & Additional Info</h3>
+          <div className="flex flex-col gap-4 text-gray-600 text-sm p-5 bg-white rounded-2xl border border-gray-100">
+            {(product.product?.return_policy || product.return_policy) && (
+              <div>
+                <span className="block font-bold text-gray-800 mb-1">Return Policy</span>
+                <span>{product.product?.return_policy || product.return_policy}</span>
+              </div>
+            )}
+            {(product.product?.days_of_return || product.days_of_return) && (
+              <div>
+                <span className="block font-bold text-gray-800 mb-1">Days of Return</span>
+                <span>{product.product?.days_of_return || product.days_of_return} days</span>
+              </div>
+            )}
+            {(product.product?.warranty || product.warranty) && (
+              <div>
+                <span className="block font-bold text-gray-800 mb-1">Warranty</span>
+                <span>{product.product?.warranty || product.warranty}</span>
+              </div>
+            )}
+            {(product.product?.deliver_between || product.deliver_between) && (
+              <div>
+                <span className="block font-bold text-gray-800 mb-1">Estimated Delivery</span>
+                <span>{product.product?.deliver_between || product.deliver_between} days</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

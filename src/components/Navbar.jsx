@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, User, ShoppingCart, Heart, Menu } from "lucide-react";
+import { Search, User, ShoppingCart, Heart, Menu, X, ChevronDown, ChevronRight } from "lucide-react";
 import { getCartAPI } from "../services/cartService";
 import { getWishlistAPI } from "../services/wishlistService";
 import { getProfile } from "../services/authService";
-import { getCategories } from "../services/categoryService";
-import { searchProducts } from "../services/productService";
+import { getCategories, getSubCategories } from "../services/categoryService";
+import { searchProducts, getHomeData } from "../services/productService";
 import logo from "../assets/logo.png";
 
 const Navbar = () => {
@@ -15,16 +15,35 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [userName, setUserName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [suggestions, setSuggestions] = useState({ products: [], categories: [] });
   const [allCategories, setAllCategories] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [expandedCategory, setExpandedCategory] = useState(null);
+  const [subCategoriesMap, setSubCategoriesMap] = useState({});
+
+  const handleCategoryClick = async (categoryId) => {
+    if (expandedCategory === categoryId) {
+      setExpandedCategory(null);
+      return;
+    }
+    setExpandedCategory(categoryId);
+    if (!subCategoriesMap[categoryId]) {
+      try {
+        const res = await getSubCategories(categoryId);
+        setSubCategoriesMap(prev => ({ ...prev, [categoryId]: res.data.data || res.data || [] }));
+      } catch (err) {
+        console.log("Error fetching subcategories", err);
+      }
+    }
+  };
 
   const handleSearch = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
       setShowSuggestions(false);
+      setShowMobileMenu(false);
     }
   };
 
@@ -36,6 +55,7 @@ const Navbar = () => {
     }
     setSearchQuery("");
     setShowSuggestions(false);
+    setShowMobileMenu(false);
   };
 
   useEffect(() => {
@@ -56,8 +76,6 @@ const Navbar = () => {
         setWishlistCount(Array.isArray(items) ? items.length : 0);
       } catch (err) {
         console.error("❌ Navbar wishlist fetch error:", err.response?.data || err);
-
-
       }
     };
 
@@ -79,8 +97,9 @@ const Navbar = () => {
 
     const fetchCategories = async () => {
       try {
-        const res = await getCategories();
-        setAllCategories(res.data.data || res.data || []);
+        const res = await getHomeData();
+        const categoriesData = res.data.data?.categories || res.data.categories || [];
+        setAllCategories(categoriesData);
       } catch (err) {
         console.log("Navbar categories error:", err);
       }
@@ -118,12 +137,10 @@ const Navbar = () => {
     const timer = setTimeout(async () => {
       if (searchQuery.trim().length > 1) {
         try {
-          // Filter categories
           const filteredCats = allCategories.filter(cat => 
             cat.name.toLowerCase().includes(searchQuery.toLowerCase())
           ).slice(0, 5);
 
-          // Fetch products
           const res = await searchProducts(searchQuery);
           const filteredProds = (res.data.data || res.data.products || res.data || []).slice(0, 5);
 
@@ -140,11 +157,11 @@ const Navbar = () => {
     return () => clearTimeout(timer);
   }, [searchQuery, allCategories]);
 
-
   return (
     <nav className="sticky top-0 z-[1000] bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-[0_1px_20px_rgba(0,0,0,0.02)] transition-all duration-300">
       <div className="max-w-[1440px] mx-auto px-5 h-[96px] flex justify-between items-center gap-6 md:gap-10">
-        {/* Left: Brand Identity */}
+        
+        {/* Left Side: Brand Identity Logo */}
         <div 
           className="cursor-pointer flex items-center transition-all duration-500 hover:scale-105" 
           onClick={() => navigate("/")}
@@ -156,6 +173,7 @@ const Navbar = () => {
           />
         </div>
 
+        {/* Desktop Search Engine (Hidden on Mobile) */}
         <div className="hidden md:flex flex-1 max-w-[500px] relative items-center group search-container">
           <input 
             type="text" 
@@ -168,7 +186,6 @@ const Navbar = () => {
           />
           <Search className="absolute left-4 text-gray-400 group-focus-within:text-[#E60023] transition-colors pointer-events-none" size={18} />
 
-          {/* Suggestions Dropdown */}
           {showSuggestions && (searchQuery.trim().length > 1) && (
             <div className="absolute top-[110%] left-0 w-full bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[2000] animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="max-h-[400px] overflow-y-auto p-2">
@@ -212,127 +229,202 @@ const Navbar = () => {
                     ))}
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+        </div>
 
-                {suggestions.products.length === 0 && suggestions.categories.length === 0 && (
-                  <div className="p-8 text-center">
-                    <p className="text-sm text-gray-400 font-bold">No quick matches found</p>
-                  </div>
+        {/* Right Side Actions for Desktop & Three Dots Trigger for Mobile */}
+        <div className="flex items-center gap-4">
+          {/* Desktop Only Actions Layout */}
+          <div className="hidden md:flex items-center gap-4">
+            <button 
+              className="relative flex items-center gap-2.5 p-2 rounded-2xl text-gray-700 cursor-pointer transition-all hover:bg-red-50 hover:text-[#E60023] group border-none bg-transparent" 
+              onClick={() => navigate(isLoggedIn ? "/profile" : "/login")}
+            >
+              <div className="p-2.5 rounded-xl bg-gray-50 group-hover:bg-white transition-colors">
+                <User size={22} className="transition-transform group-hover:scale-110" />
+              </div>
+              <div className="hidden lg:flex flex-col items-start leading-none text-left">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Account</span>
+                <span className="text-sm font-extrabold">{isLoggedIn ? (userName || "My Profile") : "Sign In"}</span>
+              </div>
+            </button>
+
+            <button 
+              className="relative flex items-center gap-2.5 p-2 rounded-2xl text-gray-700 cursor-pointer transition-all hover:bg-red-50 hover:text-[#E60023] group border-none bg-transparent" 
+              onClick={() => navigate("/wishlist")}
+            >
+              <div className="p-2.5 rounded-xl bg-gray-50 group-hover:bg-white transition-colors relative">
+                <Heart size={22} className="transition-transform group-hover:scale-110" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#E60023] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow-md">
+                    {wishlistCount}
+                  </span>
                 )}
               </div>
-              <div 
-                className="p-4 bg-gray-50 text-center border-t border-gray-100 cursor-pointer hover:bg-red-50 transition-colors"
-                onClick={() => handleSearch({ key: "Enter" })}
-              >
-                <p className="text-xs font-black text-[#E60023] uppercase tracking-widest">View all results for "{searchQuery}"</p>
+              <div className="hidden lg:flex flex-col items-start leading-none text-left">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Watchlist</span>
+                <span className="text-sm font-extrabold">Favorites</span>
               </div>
-            </div>
-          )}
-        </div>
+            </button>
 
+            <button 
+              className="relative flex items-center gap-2.5 p-2 rounded-2xl text-gray-700 cursor-pointer transition-all hover:bg-red-50 hover:text-[#E60023] group border-none bg-transparent" 
+              onClick={() => navigate("/cart")}
+            >
+              <div className="p-2.5 rounded-xl bg-gray-50 group-hover:bg-white transition-colors relative">
+                <ShoppingCart size={22} className="transition-transform group-hover:scale-110" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#E60023] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow-md">
+                    {cartCount}
+                  </span>
+                )}
+              </div>
+              <div className="hidden lg:flex flex-col items-start leading-none text-left">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Your Cart</span>
+                <span className="text-sm font-extrabold">Shop Now</span>
+              </div>
+            </button>
+          </div>
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2 md:gap-4">
-          {/* Mobile Search Toggle */}
+          {/* Three Dots Button for Mobile Screen ONLY */}
           <button 
             className="md:hidden p-2.5 rounded-xl bg-gray-50 text-gray-700 hover:bg-red-50 hover:text-[#E60023] transition-colors border-none"
-            onClick={() => setShowMobileSearch(!showMobileSearch)}
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            aria-label={showMobileMenu ? "Close menu" : "Open menu"}
           >
-            <Search size={22} />
+            {showMobileMenu ? <X size={24} /> : <Menu size={24} />}
           </button>
-
-          <button 
-            className="relative flex items-center gap-2.5 p-2 rounded-2xl text-gray-700 cursor-pointer transition-all hover:bg-red-50 hover:text-[#E60023] group border-none bg-transparent" 
-            onClick={() => navigate(isLoggedIn ? "/profile" : "/login")}
-          >
-
-            <div className="p-2.5 rounded-xl bg-gray-50 group-hover:bg-white transition-colors">
-              <User size={22} className="transition-transform group-hover:scale-110" />
-            </div>
-            <div className="hidden lg:flex flex-col items-start leading-none text-left">
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Account</span>
-              <span className="text-sm font-extrabold">
-                {isLoggedIn ? (userName || "My Profile") : "Sign In"}
-              </span>
-            </div>
-          </button>
-
-          <button 
-            className="relative flex items-center gap-2.5 p-2 rounded-2xl text-gray-700 cursor-pointer transition-all hover:bg-red-50 hover:text-[#E60023] group border-none bg-transparent" 
-            onClick={() => navigate("/wishlist")}
-          >
-            <div className="p-2.5 rounded-xl bg-gray-50 group-hover:bg-white transition-colors relative">
-              <Heart size={22} className="transition-transform group-hover:scale-110" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#E60023] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow-md animate-bounce">
-                  {wishlistCount}
-                </span>
-              )}
-            </div>
-            <div className="hidden lg:flex flex-col items-start leading-none text-left">
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Watchlist</span>
-              <span className="text-sm font-extrabold">Favorites</span>
-            </div>
-          </button>
-
-          <button 
-            className="relative flex items-center gap-2.5 p-2 rounded-2xl text-gray-700 cursor-pointer transition-all hover:bg-red-50 hover:text-[#E60023] group border-none bg-transparent" 
-            onClick={() => navigate("/cart")}
-          >
-            <div className="p-2.5 rounded-xl bg-gray-50 group-hover:bg-white transition-colors relative">
-              <ShoppingCart size={22} className="transition-transform group-hover:scale-110" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#E60023] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow-md animate-bounce">
-                  {cartCount}
-                </span>
-              )}
-            </div>
-            <div className="hidden lg:flex flex-col items-start leading-none text-left">
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Your Cart</span>
-              <span className="text-sm font-extrabold">Shop Now</span>
-            </div>
-          </button>
-
         </div>
       </div>
 
-      {/* Mobile Search Bar (Expandable) */}
-      <div className={`md:hidden px-5 pb-4 transition-all duration-300 overflow-hidden search-container ${showMobileSearch ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
-        <div className="relative flex items-center">
-          <input 
-            type="text" 
-            placeholder="Search our catalog..." 
-            className="w-full py-2.5 px-5 pl-12 rounded-2xl border border-gray-200 text-[0.9rem] bg-gray-50/50 text-gray-900 focus:bg-white focus:border-[#E60023] focus:outline-none focus:ring-4 focus:ring-red-50"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleSearch}
-            onFocus={() => searchQuery.trim().length > 1 && setShowSuggestions(true)}
+      {/* Unified Mobile Drawer Layout (Contains Everything Inside) */}
+      {/* Unified Mobile Drawer Layout (Contains Everything Inside) */}
+      {showMobileMenu && (
+        <div className="md:hidden">
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowMobileMenu(false)}
           />
-          <Search className="absolute left-4 text-gray-400" size={18} />
-          
-          {/* Mobile Suggestions Dropdown */}
-          {showSuggestions && (searchQuery.trim().length > 1) && (
-            <div className="absolute top-[110%] left-0 w-full bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[2000]">
-               <div className="max-h-[300px] overflow-y-auto p-2">
-                {suggestions.categories.map(cat => (
-                  <div key={cat.id} className="px-4 py-3 border-b border-gray-50 last:border-0 flex items-center gap-3" onClick={() => handleSuggestionClick("category", cat)}>
-                    <Menu size={14} className="text-gray-400" />
-                    <span className="text-sm font-bold text-gray-700">{cat.name}</span>
-                  </div>
-                ))}
-                {suggestions.products.map(prod => (
-                  <div key={prod.id} className="px-4 py-3 border-b border-gray-50 last:border-0 flex items-center gap-3" onClick={() => handleSuggestionClick("product", prod)}>
-                    <img src={prod.latest_image?.image ? `https://project.varietymegastore.com/uploads/variations/${prod.latest_image.image}` : "https://via.placeholder.com/30"} className="w-8 h-8 rounded-lg object-cover" alt="" />
-                    <span className="text-sm font-bold text-gray-700 line-clamp-1">{prod.title || prod.name}</span>
-                  </div>
-                ))}
-               </div>
+
+          {/* Sidebar */}
+          <div
+            className="fixed top-0 right-0 h-screen w-[85%] max-w-[340px] bg-white z-[9999] shadow-2xl overflow-y-auto pb-24 animate-in slide-in-from-right-8 duration-300"
+          >
+            <div className="sticky top-0 bg-white z-20 p-5 flex justify-between items-center border-b border-gray-100 shadow-sm">
+              <h2 className="text-lg font-black text-gray-800">
+                Menu
+              </h2>
+              <button
+                onClick={() => setShowMobileMenu(false)}
+                className="p-2 rounded-full hover:bg-red-50 hover:text-[#E60023] transition-colors"
+              >
+                <X size={20} />
+              </button>
             </div>
-          )}
+
+            {/* 1. Mobile Inline Search Bar */}
+            <div className="p-4 border-b border-gray-100 search-container">
+              <div className="relative flex items-center">
+                <input 
+                  type="text" 
+                  placeholder="Search our catalog..." 
+                  className="w-full py-2.5 px-4 pl-10 rounded-xl border border-gray-200 text-sm bg-gray-50 text-gray-900 focus:bg-white focus:border-[#E60023] focus:outline-none"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearch}
+                  onFocus={() => searchQuery.trim().length > 1 && setShowSuggestions(true)}
+                />
+                <Search className="absolute left-3.5 text-gray-400" size={16} />
+              </div>
+
+              {/* Inline Mobile Suggestions UI */}
+              {showSuggestions && (searchQuery.trim().length > 1) && (
+                <div className="mt-2 bg-white rounded-xl border border-gray-100 overflow-hidden shadow-lg">
+                  <div className="max-h-[220px] overflow-y-auto p-1.5">
+                    {suggestions.categories.map(cat => (
+                      <div key={cat.id} className="px-3 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center gap-2" onClick={() => handleSuggestionClick("category", cat)}>
+                        <Menu size={12} className="text-gray-400" />
+                        <span>{cat.name}</span>
+                      </div>
+                    ))}
+                    {suggestions.products.map(prod => (
+                      <div key={prod.id} className="px-3 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center gap-2" onClick={() => handleSuggestionClick("product", prod)}>
+                        <img src={prod.latest_image?.image ? `https://project.varietymegastore.com/uploads/variations/${prod.latest_image.image}` : "https://via.placeholder.com/24"} className="w-6 h-6 rounded object-cover" alt="" />
+                        <span className="line-clamp-1">{prod.title || prod.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Unified Quick Action Shortcuts */}
+            <div className="p-4 grid grid-cols-3 gap-2 border-b border-gray-100 bg-gray-50/50">
+              <button 
+                className="flex flex-col items-center justify-center p-3 rounded-xl bg-white border border-gray-100 text-gray-700 hover:text-[#E60023] hover:shadow-sm transition-all"
+                onClick={() => { setShowMobileMenu(false); navigate(isLoggedIn ? "/profile" : "/login"); }}
+              >
+                <User size={20} />
+                <span className="text-[10px] font-bold mt-1 max-w-full truncate">
+                  {isLoggedIn ? (userName || "Account") : "Sign In"}
+                </span>
+              </button>
+
+              <button 
+                className="relative flex flex-col items-center justify-center p-3 rounded-xl bg-white border border-gray-100 text-gray-700 hover:text-[#E60023] hover:shadow-sm transition-all"
+                onClick={() => { setShowMobileMenu(false); navigate("/wishlist"); }}
+              >
+                <Heart size={20} />
+                <span className="text-[10px] font-bold mt-1">Wishlist</span>
+                {wishlistCount > 0 && (
+                  <span className="absolute top-1.5 right-4 bg-[#E60023] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                    {wishlistCount}
+                  </span>
+                )}
+              </button>
+
+              <button 
+                className="relative flex flex-col items-center justify-center p-3 rounded-xl bg-white border border-gray-100 text-gray-700 hover:text-[#E60023] hover:shadow-sm transition-all"
+                onClick={() => { setShowMobileMenu(false); navigate("/cart"); }}
+              >
+                <ShoppingCart size={20} />
+                <span className="text-[10px] font-bold mt-1">Cart</span>
+                {cartCount > 0 && (
+                  <span className="absolute top-1.5 right-5 bg-[#E60023] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* 3. Catalog Categories Section */}
+            <div className="py-2">
+              <p className="px-5 py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Shop by Category</p>
+              {allCategories.map(cat => (
+                <div key={cat.id} className="border-b border-gray-50 last:border-0">
+                  <div 
+                    className="px-5 py-3.5 flex justify-between items-center cursor-pointer hover:bg-red-50 transition-colors"
+                    onClick={() => {
+                      setShowMobileMenu(false);
+                      navigate(`/category/${cat.id}`);
+                    }}
+                  >
+                    <span className="text-sm font-bold text-gray-700">{cat.name}
+                     
+                    </span>
+                    <ChevronRight size={16} className="text-gray-400" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 };
 
 export default Navbar;
-
