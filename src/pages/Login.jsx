@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
 import { LogIn, Phone, Lock, Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 import { loginUser } from "../services/authService";
@@ -21,7 +22,7 @@ const Login = () => {
       console.log("TOKEN:", token);
 
       if (!token) {
-        alert("Authentication failed: Token not found.");
+        toast.error("Authentication failed: Token not found.");
         return;
       }
 
@@ -33,7 +34,7 @@ const Login = () => {
     } catch (err) {
       console.error(err);
       console.log("LOGIN ERROR RESPONSE:", err.response?.data);
-      alert(err.response?.data?.message || "Login failed. Please check your credentials.");
+      toast.error(err.response?.data?.message || "Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }

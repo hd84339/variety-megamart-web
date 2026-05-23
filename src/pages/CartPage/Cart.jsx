@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingBag, ShoppingCart, ArrowLeft } from "lucide-react";
 import { getCartAPI, deleteCartAPI, addToCartAPI } from "../../services/cartService";
@@ -62,7 +63,7 @@ const Cart = () => {
         console.log("Removal attempt failed:", payload);
       }
     }
-    alert("Failed to remove item.");
+    toast.error("Failed to remove item.");
   };
 
   const updateQuantity = async (item, delta) => {

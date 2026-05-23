@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
 import Footer from "./components/Footer";
@@ -36,6 +37,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Toaster position="top-center" reverseOrder={false} toastOptions={{ style: { borderRadius: '16px', background: '#333', color: '#fff', fontWeight: 'bold' } }} />
       <Navbar />
       <ScrollToTop />
       <Routes>

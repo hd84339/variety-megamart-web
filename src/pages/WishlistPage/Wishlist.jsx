@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { getWishlistAPI, deleteWishlistAPI } from "../../services/wishlistService";
 import { useNavigate } from "react-router-dom";
 import { Trash2, ShoppingCart, Heart } from "lucide-react";
@@ -8,10 +9,12 @@ const IMAGE_BASE = "https://project.varietymegastore.com/uploads/variations/";
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState(null);
   const navigate = useNavigate();
 
   const loadWishlist = async () => {
     setLoading(true);
+    setErrorMsg(null);
     try {
       const res = await getWishlistAPI();
       console.log("🔍 WISHLIST RESPONSE:", res.data);
@@ -43,6 +46,9 @@ const Wishlist = () => {
     } catch (err) {
       console.error("❌ Wishlist page fetch error:", err);
       setWishlist([]); 
+      if (err.response?.status >= 500) {
+        setErrorMsg("Your wishlist cannot be loaded due to a server error. A corrupted item in your account's database is causing the backend to crash.");
+      }
     } finally {
       setLoading(false);
     }
@@ -68,7 +74,7 @@ const Wishlist = () => {
       window.dispatchEvent(new Event("wishlistUpdated"));
     } catch (err) {
       console.log("Remove wishlist error:", err);
-      alert("Failed to remove item");
+      toast.error("Failed to remove item");
     }
   };
 
@@ -76,6 +82,25 @@ const Wishlist = () => {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="animate-pulse text-xl font-bold text-gray-400">Loading Watchlist...</div>
+      </div>
+    );
+  }
+
+  if (errorMsg) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center">
+          <Heart size={40} className="text-[#E60023] opacity-50" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900">Server Error</h2>
+        <p className="text-red-600 max-w-md text-center font-bold bg-red-50 p-4 rounded-xl border border-red-100">{errorMsg}</p>
+        <p className="text-gray-500 max-w-md text-center">To fix this, please open the Mobile App and remove ALL items from your wishlist. This will delete the corrupted entry from the database.</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="mt-4 px-8 py-3 bg-[#111] text-white rounded-full font-bold hover:bg-gray-800 transition-colors"
+        >
+          Try Again
+        </button>
       </div>
     );
   }

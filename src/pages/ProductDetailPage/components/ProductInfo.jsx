@@ -1,4 +1,5 @@
 import React from "react";
+import toast from "react-hot-toast";
 import { 
   ShoppingCart, 
   Minus, 
@@ -18,7 +19,7 @@ const ProductInfo = ({ product, title, quantity, setQuantity, handleAddToCart })
     try {
       // Pass product.id (which is the variation_id), since backend expects variation IDs in wishlist
       await addToWishlistAPI(product.id);
-      alert("Added to wishlist ❤️");
+      toast.success("Added to wishlist ❤️");
       window.dispatchEvent(new Event("wishlistUpdated"));
     } catch (err) {
       console.log(err);

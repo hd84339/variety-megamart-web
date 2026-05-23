@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Truck, ChevronRight } from "lucide-react";
 import { orderCartProductAPI } from "../../services/orderService";
@@ -66,18 +67,18 @@ const Checkout = () => {
 
   const saveAddress = async () => {
     if (!addressForm.address || !addressForm.mobile) {
-      alert("Please fill in the required fields.");
+      toast.error("Please fill in the required fields.");
       return;
     }
     try {
       setLoading(true);
       await addAddressAPI(addressForm);
-      alert("Address saved successfully!");
+      toast.success("Address saved successfully!");
       setAddressForm(emptyForm); 
       await loadAddresses(); 
     } catch (err) {
       console.error("SAVE ERROR:", err.response?.data);
-      alert("Failed to save address.");
+      toast.error("Failed to save address.");
     } finally {
       setLoading(false);
     }
@@ -85,7 +86,7 @@ const Checkout = () => {
 
   const placeOrder = async () => {
     if (!selectedAddress) {
-      alert("Please select a delivery address");
+      toast.error("Please select a delivery address");
       return;
     }
 
@@ -95,7 +96,7 @@ const Checkout = () => {
     ).filter(Boolean);
 
     if (variationIds.length === 0) {
-      alert("Your cart is empty. Please add items before placing an order.");
+      toast.error("Your cart is empty. Please add items before placing an order.");
       return;
     }
 
@@ -104,13 +105,13 @@ const Checkout = () => {
       console.log("📦 Placing order with variation_ids:", variationIds);
       const res = await orderCartProductAPI(variationIds);
       console.log("✅ ORDER SUCCESS:", res.data);
-      alert("Order placed successfully! 🎉");
+      toast.success("Order placed successfully! 🎉");
       window.dispatchEvent(new Event("cartUpdated"));
       navigate("/orders");
     } catch (err) {
       console.error("ORDER ERROR:", err.response?.data);
       const errorMsg = err.response?.data?.message || err.response?.data?.msg || err.message || "Please try again.";
-      alert(`Order failed: ${errorMsg}`);
+      toast.error(`Order failed: ${errorMsg}`);
     } finally {
       setOrderLoading(false);
     }

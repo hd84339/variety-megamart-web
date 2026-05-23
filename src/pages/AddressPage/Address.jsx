@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { MapPin, Plus, ArrowLeft, Trash2, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAddressAPI, addAddressAPI, deleteAddressAPI, editAddressAPI } from "../../services/addressService";
@@ -45,17 +46,17 @@ const Address = () => {
 
   const saveAddress = async () => {
     if (!addressForm.address || !addressForm.mobile) {
-      alert("Please fill in the required fields.");
+      toast.error("Please fill in the required fields.");
       return;
     }
     try {
       setLoading(true);
       if (editingId) {
         await editAddressAPI({ ...addressForm, address_id: editingId });
-        alert("Address updated successfully!");
+        toast.success("Address updated successfully!");
       } else {
         await addAddressAPI(addressForm);
-        alert("Address saved successfully!");
+        toast.success("Address saved successfully!");
       }
       setAddressForm(emptyForm);
       setShowForm(false);
@@ -63,7 +64,7 @@ const Address = () => {
       await loadAddresses();
     } catch (err) {
       console.error("SAVE ERROR:", err.response?.data);
-      alert("Failed to save address.");
+      toast.error("Failed to save address.");
     } finally {
       setLoading(false);
     }
@@ -93,7 +94,7 @@ const Address = () => {
       setAddresses(prev => prev.filter(addr => addr.id !== id));
     } catch (err) {
       console.error("DELETE ERROR:", err);
-      alert("Failed to delete address.");
+      toast.error("Failed to delete address.");
     } finally {
       setLoading(false);
     }

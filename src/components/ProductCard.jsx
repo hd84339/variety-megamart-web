@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
   import React from "react";
   import { useNavigate } from "react-router-dom";
   import { ShoppingCart, Eye, Heart } from "lucide-react";
@@ -17,14 +18,14 @@
 
       try {
         await addToWishlistAPI(productId);
-        alert("Added to wishlist ❤️");
+        toast.success("Added to wishlist ❤️");
         window.dispatchEvent(new Event("wishlistUpdated"));
       } catch (error) {
         if (error.response?.status === 401) {
-          alert("Please login first");
+          toast.error("Please login first");
           navigate("/login");
         } else {
-          alert("Failed to add to wishlist.");
+          toast.error("Failed to add to wishlist.");
         }
       }
     };
@@ -51,14 +52,14 @@
 
       try {
         await addToCartAPI(productId, variationId, 1);
-        alert(`${title} added to cart.`);
+        toast.success(`${title} added to cart.`);
         window.dispatchEvent(new Event("cartUpdated"));
       } catch (error) {
         if (error.response?.status === 401) {
-          alert("Please login first");
+          toast.error("Please login first");
           navigate("/login");
         } else {
-          alert("Failed to add to cart.");
+          toast.error("Failed to add to cart.");
         }
       }
     };

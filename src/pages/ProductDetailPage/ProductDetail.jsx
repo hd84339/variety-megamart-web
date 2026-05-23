@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProductDetail } from "../../services/productService";
@@ -58,16 +59,16 @@ const ProductDetail = () => {
     try {
       const title = product.title || product.product?.title || "Product";
       await addToCartAPI(product.product_id, product.id, quantity);
-      alert(`${title} added to cart.`);
+      toast.success(`${title} added to cart.`);
       window.dispatchEvent(new Event("cartUpdated"));
       navigate("/cart");
     } catch (error) {
       console.log("Add to cart failed:", error);
       if (error.response?.status === 401) {
-        alert("Please login first");
+        toast.error("Please login first");
         navigate("/login");
       } else {
-        alert("Failed to add to cart. Please try again.");
+        toast.error("Failed to add to cart. Please try again.");
       }
     }
   };

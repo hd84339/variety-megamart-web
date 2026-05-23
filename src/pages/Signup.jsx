@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
 import { 
   UserPlus, 
@@ -34,7 +35,7 @@ const Signup = () => {
     e.preventDefault(); // Standard form behavior
     
     if (form.password !== form.confirm_password) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
 
@@ -42,11 +43,11 @@ const Signup = () => {
     try {
       const res = await registerAPI(form);
       console.log("SIGNUP SUCCESS:", res.data);
-      alert("Signup successful! Please log in.");
+      toast.success("Signup successful! Please log in.");
       navigate("/login");
     } catch (err) {
       console.error("SIGNUP ERROR:", err.response?.data);
-      alert(err.response?.data?.message || "Registration failed. Try again.");
+      toast.error(err.response?.data?.message || "Registration failed. Try again.");
     } finally {
       setLoading(false);
     }
