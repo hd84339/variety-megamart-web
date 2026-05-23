@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Truck, ChevronRight } from "lucide-react";
-import { createOrderAPI } from "../../services/orderService";
+import { orderCartProductAPI } from "../../services/orderService";
+import { getCartAPI } from "../../services/cartService";
 import { getAddressAPI, addAddressAPI } from "../../services/addressService";
 import AddressSelection from "./components/AddressSelection";
 import AddressForm from "./components/AddressForm";
@@ -16,6 +17,7 @@ const Checkout = () => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [orderLoading, setOrderLoading] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
 
   const emptyForm = {
     first_name: "", last_name: "", email: "", mobile: "", locality: "", address: "", postcode: "",
@@ -25,7 +27,24 @@ const Checkout = () => {
 
   useEffect(() => {
     loadAddresses();
+    loadCart();
   }, []);
+
+  const loadCart = async () => {
+    try {
+      const res = await getCartAPI();
+      let items = [];
+      const d = res.data;
+      if (Array.isArray(d)) items = d;
+      else if (d?.data && Array.isArray(d.data)) items = d.data;
+      else if (d?.cart && Array.isArray(d.cart)) items = d.cart;
+      else if (d?.cart?.items && Array.isArray(d.cart.items)) items = d.cart.items;
+      else if (d?.items && Array.isArray(d.items)) items = d.items;
+      setCartItems(items);
+    } catch (err) {
+      console.error("LOAD CART ERROR:", err);
+    }
+  };
 
   const loadAddresses = async () => {
     setLoading(true);
@@ -69,26 +88,29 @@ const Checkout = () => {
       alert("Please select a delivery address");
       return;
     }
+
+    // Extract variation_ids from cart items
+    const variationIds = cartItems.map(item => 
+      item.variation_id || item.product_variation_id || item.id
+    ).filter(Boolean);
+
+    if (variationIds.length === 0) {
+      alert("Your cart is empty. Please add items before placing an order.");
+      return;
+    }
+
     setOrderLoading(true);
     try {
-      const payload = {
-        payment_method: paymentMethod.toLowerCase(),
-        payment_status: paymentMethod === "ONLINE" ? "paid" : "pending",
-        transaction_id: paymentMethod === "ONLINE" ? "online_" + Date.now() : "cod_order",
-        first_name: selectedAddress.first_name,
-        last_name: selectedAddress.last_name,
-        email: selectedAddress.email,
-        mobile: selectedAddress.mobile,
-        address: selectedAddress.address,
-        locality: selectedAddress.locality,
-        postcode: selectedAddress.postcode,
-      };
-      const res = await createOrderAPI(payload);
-      alert("Order placed successfully!");
+      console.log("📦 Placing order with variation_ids:", variationIds);
+      const res = await orderCartProductAPI(variationIds);
+      console.log("✅ ORDER SUCCESS:", res.data);
+      alert("Order placed successfully! 🎉");
+      window.dispatchEvent(new Event("cartUpdated"));
       navigate("/orders");
     } catch (err) {
       console.error("ORDER ERROR:", err.response?.data);
-      alert("Order failed. Please try again.");
+      const errorMsg = err.response?.data?.message || err.response?.data?.msg || err.message || "Please try again.";
+      alert(`Order failed: ${errorMsg}`);
     } finally {
       setOrderLoading(false);
     }

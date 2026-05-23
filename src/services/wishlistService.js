@@ -10,9 +10,10 @@ export const getWishlistAPI = () => {
 
 // ADD TO WISHLIST
 export const addToWishlistAPI = (product_id) => {
-  return API.post("/auth/addToWishlist", {
-    product_id,
-  });
+  return API.post("/auth/addToWishlist", 
+    { product_id },
+    { params: { product_id } }
+  );
 };
 
 

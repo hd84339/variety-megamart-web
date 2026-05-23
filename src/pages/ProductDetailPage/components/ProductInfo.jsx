@@ -16,7 +16,8 @@ const ProductInfo = ({ product, title, quantity, setQuantity, handleAddToCart })
 
     const handleWishlist = async () => {
     try {
-      await addToWishlistAPI(product.product_id || product.id);
+      // Pass product.id (which is the variation_id), since backend expects variation IDs in wishlist
+      await addToWishlistAPI(product.id);
       alert("Added to wishlist ❤️");
       window.dispatchEvent(new Event("wishlistUpdated"));
     } catch (err) {

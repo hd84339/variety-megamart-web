@@ -1,8 +1,16 @@
 import API from "./api";
 
-// CREATE ORDER
+// CREATE ORDER (legacy - may not exist on this backend)
 export const createOrderAPI = (data) => {
   return API.post("/auth/createUserOrder", data);
+};
+
+// ORDER CART PRODUCTS - The correct endpoint for placing orders from cart
+// Sends an array of variation_ids from the cart items
+export const orderCartProductAPI = (variationIds) => {
+  return API.post("/auth/orderCartProduct", {
+    variation_id: variationIds,
+  });
 };
 
 // GET ORDERS

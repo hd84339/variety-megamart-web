@@ -3,8 +3,9 @@ import { addReview } from "../../../services/reviewService";
 import StarRating from "./StarRating";
 import { MessageSquarePlus, AlertCircle, ShieldCheck } from "lucide-react";
 
-const AddReview = ({ productId, onReviewAdded }) => {
+const AddReview = ({ productId, variationId, onReviewAdded }) => {
   const [rating, setRating] = useState(5);
+  const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -13,19 +14,21 @@ const AddReview = ({ productId, onReviewAdded }) => {
     e.preventDefault();
     setError(null);
 
-    if (!comment.trim()) return;
+    if (!comment.trim() || !title.trim()) return;
 
     try {
       setLoading(true);
 
       await addReview({
-        productId,
         product_id: productId,
+        variation_id: variationId,
         rating,
-        comment: comment.trim(),
+        review: comment.trim(),
+        title: title.trim(),
       });
 
       setComment("");
+      setTitle("");
       setRating(5);
 
       if (typeof onReviewAdded === "function") {
@@ -92,22 +95,39 @@ const AddReview = ({ productId, onReviewAdded }) => {
         </div>
 
         {/* DETAILS ENTRY COMPONENT */}
-        <div className="space-y-2">
-          <label htmlFor="review-comment" className="block text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest">
-            Review Details Dossier
-          </label>
-          <div className="relative">
-            <textarea
-              id="review-comment"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              rows="4"
-              placeholder="Elaborate on structural performance build quality, features, or design fidelity..."
-              className="w-full bg-white border-2 border-slate-100 rounded-xl p-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1d6acf] focus:bg-white transition-all resize-none shadow-inner"
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="review-title" className="block text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest">
+              Review Title
+            </label>
+            <input
+              type="text"
+              id="review-title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Sum up your experience in a headline..."
+              className="w-full bg-white border-2 border-slate-100 rounded-xl p-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1d6acf] focus:bg-white transition-all shadow-inner"
               required
             />
-            <div className="absolute bottom-3 right-4 flex items-center gap-1.5 opacity-30 select-none pointer-events-none">
-              <span className="text-[8px] font-mono font-bold text-slate-500 uppercase tracking-widest">REAL_TIME_INPUT</span>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="review-comment" className="block text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest">
+              Review Details Dossier
+            </label>
+            <div className="relative">
+              <textarea
+                id="review-comment"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                rows="4"
+                placeholder="Elaborate on structural performance build quality, features, or design fidelity..."
+                className="w-full bg-white border-2 border-slate-100 rounded-xl p-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1d6acf] focus:bg-white transition-all resize-none shadow-inner"
+                required
+              />
+              <div className="absolute bottom-3 right-4 flex items-center gap-1.5 opacity-30 select-none pointer-events-none">
+                <span className="text-[8px] font-mono font-bold text-slate-500 uppercase tracking-widest">REAL_TIME_INPUT</span>
+              </div>
             </div>
           </div>
         </div>
@@ -128,7 +148,7 @@ const AddReview = ({ productId, onReviewAdded }) => {
           
           <button
             type="submit"
-            disabled={loading || !comment.trim()}
+            disabled={loading || !comment.trim() || !title.trim()}
             className="w-full sm:w-auto px-8 py-3.5 bg-slate-900 text-white text-[10px] font-mono font-black text-uppercase tracking-[0.25em] rounded-xl hover:bg-[#1d6acf] disabled:bg-slate-100 disabled:text-slate-300 transition-all duration-300 shadow-md transform active:scale-95 disabled:pointer-events-none hover:-translate-y-0.5"
           >
             {loading ? "TRANSMITTING..." : "PUBLISH_REVIEW // SUBMIT"}

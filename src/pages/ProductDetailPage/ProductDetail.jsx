@@ -33,23 +33,25 @@ const ProductDetail = () => {
   }, [id]);
 
   const fetchReviews = useCallback(async () => {
+    if (!product?.product_id) return;
     try {
       setLoadingReviews(true);
-      const data = await getReviews(id);
-      setReviews(data?.data?.data || data?.data || data || []);
+      const data = await getReviews(product.product_id, product.id);
+      setReviews(data?.data || []);
     } catch (error) {
       console.error("failed to fetch reviews", error);
       setReviews([]);
     } finally {
       setLoadingReviews(false);
     }
-  }, [id]);
+  }, [product?.product_id, product?.id]);
 
-  // Fetch reviews on mount and when id changes
+  // Fetch reviews when product is loaded
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchReviews();
-  }, [fetchReviews]);
+    if (product) {
+      fetchReviews();
+    }
+  }, [fetchReviews, product]);
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -101,7 +103,7 @@ const ProductDetail = () => {
           {/* Add Review Section */}
           <div className="border-t pt-6 mt-6">
             <h3 className="text-xl font-semibold mb-4">Customer Reviews</h3>
-            <AddReview productId={id} onReviewAdded={fetchReviews} />
+            <AddReview productId={product.product_id} variationId={product.id} onReviewAdded={fetchReviews} />
             
             {/* Render reviews list */}
             <div className="mt-6 space-y-4">
@@ -113,8 +115,9 @@ const ProductDetail = () => {
                 reviews.map((review) => (
                   <div key={review.id || review._id} className="border-b pb-4">
                     <StarRating rating={review.rating} />
-                    <p className="text-gray-600 mt-1">{review.comment || review.text}</p>
-                    <p className="text-xs text-gray-400 mt-1">— {review.username || "Anonymous"}</p>
+                    {review.title && <h4 className="font-semibold text-gray-800 mt-2">{review.title}</h4>}
+                    <p className="text-gray-600 mt-1">{review.review || review.comment || review.text}</p>
+                    <p className="text-xs text-gray-400 mt-1">— {review.username || review.user?.name || "Anonymous"}</p>
                   </div>
                 ))
               )}

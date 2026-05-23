@@ -17,18 +17,26 @@ const Wishlist = () => {
       console.log("🔍 WISHLIST RESPONSE:", res.data);
 
       let items = [];
-      if (Array.isArray(res.data)) {
-        items = res.data;
-      } else if (res.data?.data && Array.isArray(res.data.data)) {
-        items = res.data.data;
-      } else if (res.data?.wishlist && Array.isArray(res.data.wishlist)) {
-        items = res.data.wishlist;
-      } else if (res.data?.wishlist?.items && Array.isArray(res.data.wishlist.items)) {
-        items = res.data.wishlist.items;
-      } else if (res.data?.products && Array.isArray(res.data.products)) {
-        items = res.data.products;
-      } else if (res.data?.items && Array.isArray(res.data.items)) {
-        items = res.data.items;
+      const d = res.data;
+      
+      if (Array.isArray(d)) {
+        items = d;
+      } else if (d?.data && Array.isArray(d.data)) {
+        items = d.data;
+      } else if (d?.wishlist && Array.isArray(d.wishlist)) {
+        items = d.wishlist;
+      } else if (d?.data?.wishlist && Array.isArray(d.data.wishlist)) {
+        items = d.data.wishlist;
+      } else if (d?.data?.data && Array.isArray(d.data.data)) {
+        items = d.data.data;
+      } else if (d?.wishlist?.items && Array.isArray(d.wishlist.items)) {
+        items = d.wishlist.items;
+      } else if (d?.data?.items && Array.isArray(d.data.items)) {
+        items = d.data.items;
+      } else if (d?.products && Array.isArray(d.products)) {
+        items = d.products;
+      } else if (d?.items && Array.isArray(d.items)) {
+        items = d.items;
       }
 
       setWishlist(Array.isArray(items) ? items : []);
@@ -132,7 +140,7 @@ const Wishlist = () => {
 
               <div className="relative aspect-square overflow-hidden bg-[#F9F9F9]">
                 <img
-                  src={image.startsWith("http") ? image : IMAGE_BASE + image}
+                  src={typeof image === 'string' && image.startsWith("http") ? image : IMAGE_BASE + (typeof image === 'string' ? image : '')}
                   alt={product.title || product.name}
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />

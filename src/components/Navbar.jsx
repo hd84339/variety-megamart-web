@@ -72,8 +72,19 @@ const Navbar = () => {
     const fetchWishlistCount = async () => {
       try {
         const res = await getWishlistAPI();
-        const items = res.data.data || res.data.wishlist || res.data.products || res.data || [];
-        setWishlistCount(Array.isArray(items) ? items.length : 0);
+        let items = [];
+        const d = res.data;
+        if (Array.isArray(d)) items = d;
+        else if (d?.data && Array.isArray(d.data)) items = d.data;
+        else if (d?.wishlist && Array.isArray(d.wishlist)) items = d.wishlist;
+        else if (d?.data?.wishlist && Array.isArray(d.data.wishlist)) items = d.data.wishlist;
+        else if (d?.data?.data && Array.isArray(d.data.data)) items = d.data.data;
+        else if (d?.wishlist?.items && Array.isArray(d.wishlist.items)) items = d.wishlist.items;
+        else if (d?.data?.items && Array.isArray(d.data.items)) items = d.data.items;
+        else if (d?.products && Array.isArray(d.products)) items = d.products;
+        else if (d?.items && Array.isArray(d.items)) items = d.items;
+        
+        setWishlistCount(items.length);
       } catch (err) {
         console.error("❌ Navbar wishlist fetch error:", err.response?.data || err);
       }
