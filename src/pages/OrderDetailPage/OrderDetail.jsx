@@ -20,13 +20,32 @@ const OrderDetail = () => {
       const responseData = res.data;
       console.log("ORDER RECEIPT FULL RESPONSE:", responseData);
       
-      if (responseData?.response === false || responseData?.msg === "Unauthorised Access") {
-        console.error("Failed to fetch order:", responseData.msg);
-        setOrder(null); // This will trigger the "Order not found" fallback UI
-        return;
-      }
+      let orderData = responseData?.data || responseData?.result || responseData?.order || responseData;
       
-      const orderData = responseData?.data || responseData?.result || responseData?.order || responseData;
+      // If the direct receipt endpoint fails with 401, try finding it in the user's order list!
+      if (responseData?.response === false || responseData?.msg === "Unauthorised Access" || responseData?.[0] === 401) {
+        console.warn("Direct receipt API returned 401. Falling back to getUserOrder list...");
+        
+        // Import getOrdersAPI at the top if not already (it's in orderService, let's assume it's imported or we can just fetch it)
+        const { getOrdersAPI } = await import("../../services/orderService");
+        const listRes = await getOrdersAPI();
+        const listData = listRes.data?.data?.orders || listRes.data?.data || listRes.data?.orders || listRes.data || [];
+        
+        const foundOrder = (Array.isArray(listData) ? listData : []).find(
+            (o) => String(o.id || o._id) === String(id)
+        );
+
+        if (!foundOrder) {
+            console.error("Order not found in user's order list either.");
+            setOrder(null);
+            return;
+        }
+        orderData = foundOrder;
+      }
+
+      if (Array.isArray(orderData) && orderData.length > 0) {
+        orderData = orderData[0];
+      }
       setOrder(orderData);
     } catch (err) {
       console.error("ORDER DETAIL ERROR:", err);
@@ -95,7 +114,7 @@ const OrderDetail = () => {
             <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
                 <h3 className="text-xl font-black text-gray-900 mb-6 tracking-tight">Order Content</h3>
                 <div className="space-y-6">
-                    {(order.products || order.items || []).map((item, idx) => (
+                    {(order.products || order.items || order.order_items || order.orderDetails || []).map((item, idx) => (
                         <div key={idx} className="flex items-center gap-5 p-4 bg-gray-50 rounded-[2rem] border border-gray-100">
                             <div className="w-20 h-20 bg-white rounded-2xl overflow-hidden border border-gray-100">
                                 <img 
