@@ -17,12 +17,20 @@ const OrderDetail = () => {
     setLoading(true);
     try {
       const res = await getOrderReceipt(id);
-      console.log("ORDER RECEIPT FULL RESPONSE:", res.data);
+      const responseData = res.data;
+      console.log("ORDER RECEIPT FULL RESPONSE:", responseData);
       
-      const orderData = res.data?.data || res.data?.result || res.data?.order || res.data;
+      if (responseData?.response === false || responseData?.msg === "Unauthorised Access") {
+        console.error("Failed to fetch order:", responseData.msg);
+        setOrder(null); // This will trigger the "Order not found" fallback UI
+        return;
+      }
+      
+      const orderData = responseData?.data || responseData?.result || responseData?.order || responseData;
       setOrder(orderData);
     } catch (err) {
       console.error("ORDER DETAIL ERROR:", err);
+
     } finally {
       setLoading(false);
     }
@@ -78,7 +86,7 @@ const OrderDetail = () => {
                     <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Order Date</p>
                     <div className="flex items-center gap-2 font-bold text-gray-700 mt-1">
                         <Calendar size={14} />
-                        {new Date(order.created_at).toLocaleDateString()}
+                        {new Date(order.created_at || order.createdAt || order.date || Date.now()).toLocaleDateString()}
                     </div>
                 </div>
             </div>
@@ -112,7 +120,7 @@ const OrderDetail = () => {
                     <div className="pt-4 border-t border-dashed border-gray-200 mt-6">
                         <div className="flex justify-between items-center">
                             <span className="text-gray-500 font-bold">Total Amount Paid</span>
-                            <span className="text-2xl font-black text-[#111]">₹{order.total_amount || order.grand_total}</span>
+                            <span className="text-2xl font-black text-[#111]">₹{order.total_amount || order.grand_total || order.amount || 0}</span>
                         </div>
                     </div>
                 </div>
@@ -130,11 +138,13 @@ const OrderDetail = () => {
                 <div className="p-4 bg-gray-50 rounded-2xl">
                     <p className="text-sm font-bold text-gray-800">Method</p>
                     <p className="text-sm text-gray-500 uppercase font-black tracking-widest mt-1">
-                        {order.payment_method || "Online Payment"}
+                        {order.payment_method || order.paymentType || order.payment_type || "COD"}
                     </p>
                     <div className="mt-3 pt-3 border-t border-gray-200">
                          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Status</p>
-                         <p className="text-sm font-black text-green-600 uppercase mt-1">{order.payment_status || "Paid"}</p>
+                         <p className="text-sm font-black text-green-600 uppercase mt-1">
+                            {order.payment_status || ((order.paymentType || order.payment_method) === 'COD' ? 'Pending' : 'Paid')}
+                         </p>
                     </div>
                 </div>
             </div>

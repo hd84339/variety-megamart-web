@@ -26,7 +26,14 @@ const Orders = () => {
         [];
       
       console.log("ORDERS ARRAY AFTER PARSE:", ordersData);
-      setOrders(Array.isArray(ordersData) ? ordersData : []);
+      let parsedOrders = Array.isArray(ordersData) ? ordersData : [];
+      // Sort orders descending by ID so newest is at the top
+      parsedOrders.sort((a, b) => {
+        const idA = a.id || a._id || 0;
+        const idB = b.id || b._id || 0;
+        return idB - idA;
+      });
+      setOrders(parsedOrders);
     } catch (err) {
       console.log("ORDER ERROR:", err);
       setOrders([]);
@@ -81,14 +88,14 @@ const Orders = () => {
                     </div>
                     <div className="flex items-center gap-1 text-gray-400">
                         <span className="text-xs font-bold">Total:</span>
-                        <span className="text-sm font-black text-[#111]">₹{order.total_amount || order.grand_total}</span>
+                        <span className="text-sm font-black text-[#111]">₹{order.total_amount || order.grand_total || order.amount || 0}</span>
                     </div>
                 </div>
               </div>
 
               <div className="text-right hidden md:block">
                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">
-                    {new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                    {new Date(order.created_at || order.createdAt || order.date || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                  </p>
                  <p className="text-sm font-extrabold text-gray-900">{order.products?.length || 1} Items</p>
               </div>
