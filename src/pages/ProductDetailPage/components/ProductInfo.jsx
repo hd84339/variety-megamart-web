@@ -11,8 +11,11 @@ import {
 import { addToWishlistAPI } from "../../../services/wishlistService";
 
 const ProductInfo = ({ product, title, quantity, setQuantity, handleAddToCart }) => {
-  const price = product.active_price?.price || product.price || 0;
-  const mrp = product.active_price?.mrp || product.mrp || price;
+  const basePrice = product.active_price?.price || product.price || 0;
+  const baseMrp = product.active_price?.mrp || product.mrp || basePrice;
+  
+  const price = basePrice * quantity;
+  const mrp = baseMrp * quantity;
   const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
 
     const handleWishlist = async () => {

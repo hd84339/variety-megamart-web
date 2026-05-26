@@ -65,7 +65,6 @@ const Wishlist = () => {
     };
   }, []);
 
-
   const handleRemove = async (e, id) => {
     e.stopPropagation();
     try {
@@ -134,19 +133,32 @@ const Wishlist = () => {
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
         {wishlist.map((item) => {
-          const product = item.product || item;
-          const productId = product.id;
+          const productId = item.product_id || item.product?.id || item.variation?.product_id || item.id;
+
+          const title = item.title ||
+            item.name ||
+            item.product?.title ||
+            item.product?.name ||
+            item.variation?.title ||
+            item.variation?.product?.title ||
+            "Product";
 
           const image =
-            product.latest_image?.image ||
-            product.image ||
-            product?.variation?.image ||
+            item.image ||
+            item.latest_image?.image ||
+            item.product?.image ||
+            item.product?.latest_image?.image ||
+            item.variation?.image ||
+            item.variation?.latest_image?.image ||
             "https://via.placeholder.com/150";
 
           const price =
-            product.active_price?.price ||
-            product.price ||
-            product?.variation?.price ||
+            item.price ||
+            item.active_price?.price ||
+            item.product?.price ||
+            item.product?.active_price?.price ||
+            item.variation?.price ||
+            item.variation?.active_price?.price ||
             0;
 
           return (
@@ -166,14 +178,14 @@ const Wishlist = () => {
               <div className="relative aspect-square overflow-hidden bg-[#F9F9F9]">
                 <img
                   src={typeof image === 'string' && image.startsWith("http") ? image : IMAGE_BASE + (typeof image === 'string' ? image : '')}
-                  alt={product.title || product.name}
+                  alt={title}
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
               </div>
 
               <div className="p-5 flex flex-col flex-1">
                 <h3 className="text-sm font-bold text-gray-900 line-clamp-2 leading-snug min-h-[40px] group-hover:text-[#E60023] transition-colors">
-                  {product.title || product.name}
+                  {title}
                 </h3>
                 
                 <div className="mt-auto pt-4 flex items-center justify-between">

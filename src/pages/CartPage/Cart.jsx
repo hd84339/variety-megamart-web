@@ -69,7 +69,9 @@ const Cart = () => {
   const updateQuantity = async (item, delta) => {
     const variationId = item.variation_id || item.product_variation_id;
     const productId = item.product_id || item.product?.id;
-    const newQuantity = item.quantity + delta;
+    const currentQty = parseInt(item.quantity, 10) || 1;
+    const parsedDelta = parseInt(delta, 10);
+    const newQuantity = currentQty + parsedDelta;
 
     if (newQuantity <= 0) {
       await removeItem(item);

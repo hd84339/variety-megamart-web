@@ -105,10 +105,29 @@ const Checkout = () => {
       item.variation_id || item.product_variation_id || item.id
     ).filter(Boolean);
 
+    // Extract quantities from cart items
+    const quantities = cartItems.map(item => item.quantity);
+
     if (variationIds.length === 0) {
       toast.error("Your cart is empty. Please add items before placing an order.");
       return;
     }
+
+    const calculateSubtotal = () => {
+      return cartItems.reduce((total, item) => {
+        const price = item.price ||
+          item.active_price?.price ||
+          item.variation?.price ||
+          item.variation?.active_price?.price ||
+          item.product?.price ||
+          0;
+        return total + (price * item.quantity);
+      }, 0);
+    };
+
+    const subtotal = calculateSubtotal();
+    const shipping = subtotal > 500 ? 0 : 50;
+    const totalAmount = subtotal + shipping;
 
     setOrderLoading(true);
     try {
@@ -121,7 +140,26 @@ const Checkout = () => {
         locality: selectedAddress.locality || "N/A",
         postcode: selectedAddress.postcode || selectedAddress.pincode || "000000",
         paymentType: paymentMethod,
-        variation_id: variationIds 
+        variation_id: variationIds,
+        quantity: quantities,
+        shipping: shipping,
+        shipping_fee: shipping,
+        shipping_charge: shipping,
+        shippingCharge: shipping,
+        delivery_fee: shipping,
+        deliveryFee: shipping,
+        shipping_cost: shipping,
+        shippingCost: shipping,
+        delivery_charge: shipping,
+        deliveryCharge: shipping,
+        shipping_amount: shipping,
+        shippingAmount: shipping,
+        delivery_amount: shipping,
+        deliveryAmount: shipping,
+        amount: totalAmount,
+        total: totalAmount,
+        total_amount: totalAmount,
+        totalAmount: totalAmount
       };
 
       console.log("📦 Placing order with payload:", orderPayload);
@@ -133,20 +171,24 @@ const Checkout = () => {
       if (responseData.response === true) {
         const clearCart = async () => {
           try {
-            await Promise.all(variationIds.map(id => deleteCartAPI(id)));
+            await Promise.all(cartItems.map(item => {
+              const pId = item.product_id || item.product?.id || item.id;
+              const vId = item.variation_id || item.product_variation_id || item.id;
+              return deleteCartAPI({ product_id: pId, variation_id: vId });
+            }));
           } catch (e) {
             console.error("Failed to clear cart items", e);
           }
         };
 
-        if (responseData.paymentType === 'COD') {
+        if (paymentMethod === 'COD' || responseData.paymentType === 'COD' || responseData.payment_type === 'COD') {
           await clearCart();
           toast.success("Order placed successfully! 🎉");
           window.dispatchEvent(new Event("cartUpdated"));
-          const finalOrderId = responseData.orderId || responseData.order_id || responseData.id;
+          const finalOrderId = responseData.order?.id || responseData.orderId || responseData.order_id || responseData.id || responseData.data?.id || responseData.data?.order_id || responseData.order?.order_id;
           console.log("[Checkout] Final order ID for navigation:", finalOrderId);
           // If for some reason the ID is missing, go to the orders list instead of a blank page
-          navigate(finalOrderId ? `/order/${finalOrderId}` : "/orders");
+          navigate(finalOrderId ? `/order/${finalOrderId}` : "/orders", { state: { shipping } });
         } else {
           const isLoaded = await loadRazorpayScript();
           if (!isLoaded) {
@@ -156,7 +198,7 @@ const Checkout = () => {
 
           const options = {
             key: import.meta.env.VITE_RAZORPAY_KEY_ID, 
-            amount: responseData.amount, 
+            amount: totalAmount * 100, // Total including shipping in paise
             currency: responseData.currency || "INR",
             name: "Variety Megamart",
             description: "Order Payment",
@@ -174,9 +216,9 @@ const Checkout = () => {
                   await clearCart();
                   toast.success("Payment successful! Order placed. 🎉");
                   window.dispatchEvent(new Event("cartUpdated"));
-                  const finalOrderId = responseData.orderId || responseData.order_id || responseData.id;
+                  const finalOrderId = responseData.order?.id || responseData.orderId || responseData.order_id || responseData.id || responseData.data?.id || responseData.data?.order_id || responseData.order?.order_id;
                   console.log("[Checkout] Final order ID after Razorpay:", finalOrderId);
-                  navigate(finalOrderId ? `/order/${finalOrderId}` : "/orders");
+                  navigate(finalOrderId ? `/order/${finalOrderId}` : "/orders", { state: { shipping } });
                 } else {
                   toast.error("Payment verification failed.");
                 }

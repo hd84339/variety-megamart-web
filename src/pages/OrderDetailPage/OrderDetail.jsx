@@ -46,6 +46,28 @@ const OrderDetail = () => {
       if (Array.isArray(orderData) && orderData.length > 0) {
         orderData = orderData[0];
       }
+
+      // Fetch variation details to resolve price and image on frontend
+      if (orderData) {
+        const items = orderData.products || orderData.items || orderData.order_items || orderData.orderDetails || [];
+        const { default: API } = await import("../../services/api");
+        await Promise.all(
+          items.map(async (item) => {
+            const varId = item.variation_id || item.product_variation_id || item.variation?.id;
+            if (varId) {
+              try {
+                const varRes = await API.get(`/getVariationDetail/${varId}`);
+                if (varRes.data?.data) {
+                  item.resolvedVariation = varRes.data.data;
+                }
+              } catch (e) {
+                console.error("Failed to load variation details for variation_id", varId, e);
+              }
+            }
+          })
+        );
+      }
+
       setOrder(orderData);
     } catch (err) {
       console.error("ORDER DETAIL ERROR:", err);
@@ -114,34 +136,75 @@ const OrderDetail = () => {
             <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
                 <h3 className="text-xl font-black text-gray-900 mb-6 tracking-tight">Order Content</h3>
                 <div className="space-y-6">
-                    {(order.products || order.items || order.order_items || order.orderDetails || []).map((item, idx) => (
-                        <div key={idx} className="flex items-center gap-5 p-4 bg-gray-50 rounded-[2rem] border border-gray-100">
-                            <div className="w-20 h-20 bg-white rounded-2xl overflow-hidden border border-gray-100">
-                                <img 
-                                    src={`https://project.varietymegastore.com/uploads/variations/${item.variation?.image || item.image || item.variation_id}`} 
-                                    alt="Product"
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => { e.target.src = "https://via.placeholder.com/150"; }}
-                                />
-                            </div>
-                            <div className="flex-1">
-                                <h4 className="text-sm font-black text-gray-900 line-clamp-1">
-                                    {item.product?.title || item.title || `Product #${item.product_id}`}
-                                </h4>
-                                <div className="flex items-center gap-3 mt-2">
-                                    <span className="text-xs font-bold text-gray-400">Qty: {item.quantity || 1}</span>
-                                    <span className="text-sm font-black text-[#E60023]">₹{item.price || item.total_price || item.amount}</span>
+                    {(order.products || order.items || order.order_items || order.orderDetails || []).map((item, idx) => {
+                        const targetVariationId = item.variation_id || item.product_variation_id || item.variation?.id || item.product_id || item.id;
+
+                        const title = item.title ||
+                            item.name ||
+                            item.product?.title ||
+                            item.product?.name ||
+                            item.variation?.title ||
+                            item.variation?.product?.title ||
+                            item.resolvedVariation?.title ||
+                            item.resolvedVariation?.product?.title ||
+                            `Product #${item.product_id || targetVariationId}`;
+
+                        const rawImage = item.image ||
+                            item.latest_image?.image ||
+                            item.product?.image ||
+                            item.product?.latest_image?.image ||
+                            item.variation?.image ||
+                            item.variation?.latest_image?.image ||
+                            item.variation?.product?.latest_image?.image ||
+                            item.resolvedVariation?.image ||
+                            item.resolvedVariation?.latest_image?.image ||
+                            item.resolvedVariation?.product?.latest_image?.image;
+
+                        const imageUrl = rawImage
+                            ? (rawImage.startsWith('http') ? rawImage : `https://project.varietymegastore.com/uploads/variations/${rawImage}`)
+                            : "https://via.placeholder.com/150";
+
+                        const price = item.price ||
+                            item.total_price ||
+                            item.amount ||
+                            item.resolvedVariation?.active_price?.price ||
+                            item.resolvedVariation?.price ||
+                            item.active_price?.price ||
+                            item.variation?.price ||
+                            item.variation?.active_price?.price ||
+                            item.product?.price ||
+                            0;
+
+                        return (
+                            <div 
+                                key={idx} 
+                                className="flex items-center gap-5 p-4 bg-gray-50 rounded-[2rem] border border-gray-100 cursor-pointer hover:bg-gray-100/50 transition-colors group"
+                                onClick={() => {
+                                    if (targetVariationId) {
+                                        navigate(`/product/${targetVariationId}`);
+                                    }
+                                }}
+                            >
+                                <div className="w-20 h-20 bg-white rounded-2xl overflow-hidden border border-gray-100 flex-shrink-0">
+                                    <img 
+                                        src={imageUrl} 
+                                        alt={title}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/150"; }}
+                                    />
+                                </div>
+                                <div className="flex-1">
+                                    <h4 className="text-sm font-black text-gray-900 line-clamp-1 group-hover:text-[#E60023] transition-colors">
+                                        {title}
+                                    </h4>
+                                    <div className="flex items-center gap-3 mt-2">
+                                        <span className="text-xs font-bold text-gray-400">Qty: {item.quantity || 1}</span>
+                                        <span className="text-sm font-black text-[#E60023]">₹{price}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                    
-                    <div className="pt-4 border-t border-dashed border-gray-200 mt-6">
-                        <div className="flex justify-between items-center">
-                            <span className="text-gray-500 font-bold">Total Amount Paid</span>
-                            <span className="text-2xl font-black text-[#111]">₹{order.total_amount || order.grand_total || order.amount || 0}</span>
-                        </div>
-                    </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>

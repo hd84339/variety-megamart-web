@@ -1,10 +1,20 @@
 import React from "react";
 import { Plus, Minus, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const IMAGE_BASE_URL = "https://project.varietymegastore.com/uploads/variations/";
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/150";
 
 const CartItem = ({ item, updateQuantity, removeItem }) => {
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    const pId = item.variation_id || item.product_variation_id || item.product_id || item.product?.id || item.id;
+    if (pId) {
+      navigate(`/product/${pId}`);
+    }
+  };
+
   const title = item.title ||
     item.name ||
     item.product?.title ||
@@ -42,7 +52,8 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
       <img
         src={imageUrl}
         alt={title}
-        className="w-[120px] h-[120px] object-cover rounded-xl bg-gray-50"
+        className="w-[120px] h-[120px] object-cover rounded-xl bg-gray-50 cursor-pointer hover:opacity-90 transition-opacity"
+        onClick={handleNavigate}
         onError={(e) => {
           e.target.onerror = null;
           e.target.src = PLACEHOLDER_IMAGE;
@@ -50,8 +61,8 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
       />
       <div className="flex-1 ml-5 flex flex-col justify-between">
         <div className="flex justify-between items-start">
-          <div>
-            <h4 className="text-lg font-semibold mb-1 leading-tight">{title}</h4>
+          <div onClick={handleNavigate} className="cursor-pointer group">
+            <h4 className="text-lg font-semibold mb-1 leading-tight group-hover:text-[#E60023] transition-colors">{title}</h4>
             <div className="text-[0.85rem] text-gray-500">
               {item.variant_name || item.variation?.name || "Standard Edition"}
             </div>
@@ -70,23 +81,8 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
         </div>
 
         <div className="flex justify-between items-center mt-3">
-          <div className="flex items-center bg-gray-100 rounded-lg p-1">
-            <button
-              className="w-7 h-7 bg-white rounded-md flex items-center justify-center cursor-pointer transition-colors hover:bg-gray-200 border-none shadow-sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                updateQuantity(item, -1);
-              }}
-            >
-              <Minus size={14} />
-            </button>
-            <span className="px-3 font-semibold min-w-[30px] text-center">{item.quantity}</span>
-            <button
-              className="w-7 h-7 bg-white rounded-md flex items-center justify-center cursor-pointer transition-colors hover:bg-gray-200 border-none shadow-sm"
-              onClick={() => updateQuantity(item, 1)}
-            >
-              <Plus size={14} />
-            </button>
+          <div className="flex items-center bg-gray-100 rounded-lg px-3 py-1.5">
+            <span className="text-sm font-semibold text-gray-700">Qty: {item.quantity}</span>
           </div>
           <button
             className="flex items-center gap-1.5 text-sm font-medium text-red-500 bg-transparent border-none cursor-pointer p-2 rounded-lg transition-colors hover:bg-red-50"
