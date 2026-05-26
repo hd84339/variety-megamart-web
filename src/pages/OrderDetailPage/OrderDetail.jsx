@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { getOrderReceipt } from "../../services/orderService";
 import { ArrowLeft, MapPin, CreditCard, Calendar, Package } from "lucide-react";
 
@@ -8,10 +8,31 @@ const OrderDetail = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     loadOrder();
   }, [id]);
+
+  const enrichItems = async (items) => {
+    const { default: API } = await import("../../services/api");
+    return await Promise.all(
+      items.map(async (item) => {
+        const varId = item.variation_id || item.product_variation_id || item.variation?.id;
+        if (varId) {
+          try {
+            const varRes = await API.get(`/getVariationDetail/${varId}`);
+            if (varRes.data?.data) {
+              return { ...item, resolvedVariation: varRes.data.data };
+            }
+          } catch (e) {
+            console.error("Failed to load variation details for variation_id", varId, e);
+          }
+        }
+        return item;
+      })
+    );
+  };
 
   const loadOrder = async () => {
     setLoading(true);
@@ -26,7 +47,6 @@ const OrderDetail = () => {
       if (responseData?.response === false || responseData?.msg === "Unauthorised Access" || responseData?.[0] === 401) {
         console.warn("Direct receipt API returned 401. Falling back to getUserOrder list...");
         
-        // Import getOrdersAPI at the top if not already (it's in orderService, let's assume it's imported or we can just fetch it)
         const { getOrdersAPI } = await import("../../services/orderService");
         const listRes = await getOrdersAPI();
         const listData = listRes.data?.data?.orders || listRes.data?.data || listRes.data?.orders || listRes.data || [];
@@ -246,6 +266,11 @@ const OrderDetail = () => {
                     {order.mobile && (
                         <p className="text-xs font-bold text-gray-400 mt-3">Phone: {order.mobile}</p>
                     )}
+                </div>
+                {/* Total Amount Paid */}
+                <div className="p-4 bg-gray-50 rounded-2xl mt-4">
+                    <p className="text-sm font-bold text-gray-800">Total Amount Paid</p>
+                    <p className="text-sm text-gray-500">₹{order.total_amount || order.totalAmount || order.amount || (location.state?.shipping ? (order.subtotal ? (order.subtotal + location.state.shipping) : location.state.shipping) : '')}</p>
                 </div>
             </div>
         </div>

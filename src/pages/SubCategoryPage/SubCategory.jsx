@@ -59,7 +59,7 @@ const SubCategory = () => {
         setPriceRange={setPriceRange} 
       />
 
-      <div className="max-w-[1200px] mx-auto py-10 px-5">
+      <div className="w-[92%] mx-auto py-10">
         <SubCategoryHeader 
           productCount={filteredProducts.length} 
           setShowFilters={setShowFilters} 

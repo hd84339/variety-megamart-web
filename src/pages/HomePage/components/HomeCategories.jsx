@@ -7,11 +7,11 @@ const HomeCategories = ({ categories }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-[1200px] mx-auto py-12 px-5">
+    <div className="w-[94%] mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-black text-gray-900 tracking-tight">Shop by Category</h2>
-          <p className="text-gray-500 font-medium mt-1">Explore our wide range of premium collections</p>
+          <h6 className="text-xl font-bold text-gray-900 tracking-wide uppercase">Shop by Category</h6>
+          <p className="text-gray-500 text-sm font-medium mt-1">Explore our wide range of premium collections</p>
         </div>
         <button className="hidden md:block text-[#E60023] font-bold hover:underline">View All</button>
       </div>

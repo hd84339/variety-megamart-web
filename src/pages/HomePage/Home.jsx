@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { getHomeData } from "../../services/productService";
+import { getSubCategories } from "../../services/categoryService";
 import HomeHero from "./components/HomeHero";
-import HomeProducts from "./components/HomeProducts";
 import HomeCategories from "./components/HomeCategories";
-import HomeFeaturedCategory from "./components/HomeFeaturedCategory";
+import HomeProducts from "./components/HomeProducts";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [banners, setBanners] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [sidebarCategories, setSidebarCategories] = useState([]);
   const [bestSellers, setBestSellers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,6 +37,26 @@ const Home = () => {
       setBanners(sliderData);
       setCategories(categoriesData);
       setBestSellers(bestSellersData);
+
+      // Fetch ALL subcategories for the right sidebar by mapping through all main categories
+      try {
+        const subCatPromises = categoriesData.map(cat => getSubCategories(cat.id));
+        const subCatResults = await Promise.all(subCatPromises);
+        
+        let allSubCats = [];
+        subCatResults.forEach(res => {
+          if (res.data && res.data.data) {
+            allSubCats = [...allSubCats, ...res.data.data];
+          } else if (res.data && Array.isArray(res.data)) {
+            allSubCats = [...allSubCats, ...res.data];
+          }
+        });
+        
+        setSidebarCategories(allSubCats);
+      } catch (err) {
+        console.log("Subcategory fetch error:", err);
+      }
+
     } catch (err) {
       console.log("Home error:", err);
     }
@@ -62,7 +83,7 @@ const Home = () => {
   }
 
   return (
-    <div className="bg-[#fcfcfc] min-h-screen font-sans overflow-x-hidden relative">
+    <div className="bg-[#F5F5F7] min-h-screen font-sans overflow-x-hidden relative">
       {/* Premium Background Accents */}
       <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-b from-[#FFF5F6] to-transparent pointer-events-none -z-10" />
       <div className="absolute top-[20%] -right-20 w-[500px] h-[500px] bg-red-50/50 blur-[120px] rounded-full pointer-events-none -z-10" />
@@ -72,42 +93,12 @@ const Home = () => {
       
       {/* 2. Shop By Category */}
       <HomeCategories categories={categories} />
-      
       {/* 3. Featured / Trending Products */}
-      <HomeProducts products={products} title="Featured / Trending Products" />
+      <HomeProducts products={products} title="Featured / Trending Products" categories={sidebarCategories} />
       
-      {/* 4. Featured Category Section (Mixed Media Art) */}
-      {categories.length > 0 && (
-        <HomeFeaturedCategory 
-          key={categories[0].id}
-          categoryId={categories[0].id} 
-          title={categories[0].name} 
-          subtitle={`Explore our handpicked ${categories[0].name} collection`} 
-          theme="mixed"
-        />
-      )}
-
-      {/* 5. More Category Products */}
-      {categories.length > 1 && categories.slice(1, 4).map((cat, index) => {
-        let theme = "light";
-        if (cat.name.toUpperCase().includes("STATIONERY")) theme = "office";
-        else if (cat.name.toUpperCase().includes("TEAKWOOD")) theme = "teak";
-        else if (index % 2 !== 0) theme = "alternate";
-
-        return (
-          <HomeFeaturedCategory 
-            key={cat.id}
-            categoryId={cat.id} 
-            title={cat.name} 
-            subtitle={`Explore our handpicked ${cat.name} collection`} 
-            theme={theme}
-          />
-        );
-      })}
-
       {/* 6. Best Sellers */}
       {bestSellers.length > 0 && (
-        <HomeProducts products={bestSellers} title="Best Sellers" />
+        <HomeProducts products={bestSellers} title="Best Sellers" categories={sidebarCategories} sidebarPosition="left" />
       )}
     </div>
   );
